@@ -45,8 +45,8 @@ module pong #(
     // game state
     reg paddle1_ydir;
     reg paddle2_ydir;
-    reg [4:0] ball_xspeed; // from 0 to +/- 7 where - is left, + is right
-    reg [4:0] ball_yspeed; // from 0 to +/- 7 where - is up, + is down
+    reg [7:0] ball_xspeed; // from 0 to +/- 7 where - is left, + is right
+    reg [7:0] ball_yspeed; // from 0 to +/- 7 where - is up, + is down
     //reg [31:0] update_game_counter;
     
     // game update counter
@@ -80,14 +80,19 @@ module pong #(
                 // collision detection
                 if (ball_x > GAME_WIDTH || ball_x < 0) begin
                     ball_xspeed <= ball_xspeed * -1;
+                    ball_x <= ball_x - ball_xspeed; // get away from boarder
+                end
+                else begin
+                    ball_x <= ball_x + ball_xspeed;
                 end
                 if (ball_y > GAME_HEIGHT || ball_y < 0) begin
                     ball_yspeed <= ball_yspeed * -1;
+                    ball_y <= ball_y - ball_yspeed;
+                end
+                else begin
+                    ball_y <= ball_y + ball_yspeed;
                 end
                 
-                // update position
-                ball_x <= ball_x + ball_xspeed;
-                ball_y <= ball_y + ball_yspeed;
             end
         end
     end
