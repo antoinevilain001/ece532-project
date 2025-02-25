@@ -37,10 +37,10 @@ module vga_bw#(
     // the current positions
     wire [9:0] vball_x = 300;
     wire [9:0] vball_y = 250;
-    wire [9:0] vpaddle1_x;
-    wire [9:0] vpaddle1_y;
-    wire [9:0] vpaddle2_x;
-    wire [9:0] vpaddle2_y;
+    wire [9:0] vpaddle1_x = 80;
+    wire [9:0] vpaddle1_y = 340;
+    wire [9:0] vpaddle2_x = 500;
+    wire [9:0] vpaddle2_y = 310;
     
     wire border_left = (x > 0) && (x < BORDER_WIDTH);
     wire border_right =  (x > GAME_WIDTH - BORDER_WIDTH) && (x < GAME_WIDTH);
@@ -53,7 +53,7 @@ module vga_bw#(
     wire paddle1 = (x > vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y > vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
     wire paddle2 = (x > vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y > vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
     
-    wire final_display = border || ball || centerlines;
+    wire final_display = border || centerlines || ball || paddle1 || paddle2;
     
     reg video;
     always @(posedge clk_25MHz) begin
