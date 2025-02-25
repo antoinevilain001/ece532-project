@@ -8,7 +8,8 @@ module vga_bw#(
     parameter PADDLE_HEIGHT = 10,
     parameter BALL_SIZE = 5,
     parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
-    parameter PADDLE_DISTANCE_FROM_EDGE = 20
+    parameter PADDLE_DISTANCE_FROM_EDGE = 20,
+    parameter BORDER_WIDTH = 20
 )(
     input clk,          // 100 MHz clock from Nexys4 DDR
     output hsync,   // Horizontal sync
@@ -34,8 +35,8 @@ module vga_bw#(
     vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(x), .y(y));
 
     reg video;
-    always @(*) begin
-        video = (x & 5'b10000) && active;  // Base condition: Only draw within the active display area
+    always @(posedge clk) begin
+        video <= (x & 5'b10000) && active;  // Base condition: Only draw within the active display area
     end
 
 
