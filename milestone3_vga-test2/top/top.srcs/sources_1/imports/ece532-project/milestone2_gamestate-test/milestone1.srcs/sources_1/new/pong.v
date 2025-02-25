@@ -32,12 +32,12 @@ module pong #(
     input clk,
     input resetn,
     input [1:0] user_dir,
-    output reg [7:0] paddle1_x,
-    output reg [7:0] paddle1_y,
-    output reg [7:0] paddle2_x,
-    output reg [7:0] paddle2_y,
-    output reg [7:0] ball_x,
-    output reg [7:0] ball_y,
+    output reg [9:0] paddle1_x,
+    output reg [9:0] paddle1_y,
+    output reg [9:0] paddle2_x,
+    output reg [9:0] paddle2_y,
+    output reg [9:0] ball_x,
+    output reg [9:0] ball_y,
     output reg [31:0] update_game_counter,
     output reg update_game // expose how often the game is being updated for testing
     );
@@ -45,8 +45,8 @@ module pong #(
     // game state
     reg paddle1_ydir;
     reg paddle2_ydir;
-    reg [7:0] ball_xspeed; // from 0 to +/- 7 where - is left, + is right
-    reg [7:0] ball_yspeed; // from 0 to +/- 7 where - is up, + is down
+    reg [9:0] ball_xspeed; // from 0 to +/- 7 where - is left, + is right
+    reg [9:0] ball_yspeed; // from 0 to +/- 7 where - is up, + is down
     //reg [31:0] update_game_counter;
     
     // game update counter

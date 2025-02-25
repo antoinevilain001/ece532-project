@@ -9,7 +9,7 @@ module vga_bw#(
     parameter BALL_SIZE = 5,
     parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
     parameter PADDLE_DISTANCE_FROM_EDGE = 20,
-    parameter BORDER_WIDTH = 100
+    parameter BORDER_WIDTH = 50
 )(
     input clk,          // 100 MHz clock from Nexys4 DDR
     output hsync,   // Horizontal sync
@@ -17,12 +17,12 @@ module vga_bw#(
     output [3:0] vga_r, // Red (4-bit)
     output [3:0] vga_g, // Green (4-bit)
     output [3:0] vga_b,  // Blue (4-bit)
-    input [7:0] ball_x,
-    input [7:0] ball_y,
-    input [7:0] paddle1_x,
-    input [7:0] paddle1_y,
-    input [7:0] paddle2_x,
-    input [7:0] paddle2_y
+    input [9:0] ball_x,
+    input [9:0] ball_y,
+    input [9:0] paddle1_x,
+    input [9:0] paddle1_y,
+    input [9:0] paddle2_x,
+    input [9:0] paddle2_y
 );
     wire active;
     wire [9:0] x, y;
@@ -34,8 +34,18 @@ module vga_bw#(
     // VGA sync signal generator
     vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(x), .y(y));
 
+    // the current positions
+    wire [9:0] vball_x = 300;
+    wire [9:0] vball_y = 250;
+    wire [9:0] vpaddle1_x;
+    wire [9:0] vpaddle1_y;
+    wire [9:0] vpaddle2_x;
+    wire [9:0] vpaddle2_y;
+    
+    wire ball = (x > vball_x) && (x < vball_x + BALL_SIZE) && (y > vball_y) && (y < vball_y + BALL_SIZE);
     wire border = (x < BORDER_WIDTH) || (x > GAME_WIDTH - BORDER_WIDTH) || (y < BORDER_WIDTH) || (y > GAME_HEIGHT - BORDER_WIDTH);
-    wire final_display = border;
+    wire centerlines = (x == GAME_WIDTH >> 1) || (y == GAME_HEIGHT >> 1);
+    wire final_display = border || ball || centerlines;
     
     reg video;
     always @(posedge clk_25MHz) begin

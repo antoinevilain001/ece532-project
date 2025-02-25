@@ -40,9 +40,9 @@ module top #(
     );
     
     // Signal declarations
-    wire [7:0] paddle1_x, paddle1_y;
-    wire [7:0] paddle2_x, paddle2_y;
-    wire [7:0] ball_x, ball_y;
+    wire [9:0] paddle1_x, paddle1_y;
+    wire [9:0] paddle2_x, paddle2_y;
+    wire [9:0] ball_x, ball_y;
     wire [31:0] update_game_counter;
     wire update_game;
     
