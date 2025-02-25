@@ -35,15 +35,7 @@ module vga_bw#(
 
     reg video;
     always @(*) begin
-        video = 1'b0;
-        // Draw ball
-        video = video || ((x > ball_x) && (x < (ball_x + BALL_SIZE)) && (y > ball_y) && (y < (ball_y + BALL_SIZE)));
-        // Draw paddle1
-        video = video || ((x > paddle1_x) && (x < (paddle1_x + PADDLE_WIDTH)) && (y > paddle1_y) && (y < (paddle1_y + PADDLE_HEIGHT)));
-        // Draw paddle2
-        video = video || ((x > paddle2_x) && (x < (paddle2_x + PADDLE_WIDTH)) && (y > paddle2_y) && (y < (paddle2_y + PADDLE_HEIGHT)));
-        
-        video = video && active;  // Base condition: Only draw within the active display area
+        video = (x & 5'b10000) && active;  // Base condition: Only draw within the active display area
     end
 
 
