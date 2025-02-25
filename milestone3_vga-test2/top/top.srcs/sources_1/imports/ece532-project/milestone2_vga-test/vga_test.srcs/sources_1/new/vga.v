@@ -2,14 +2,14 @@
 
 
 module vga_bw#(
-    parameter GAME_WIDTH = 210,
-    parameter GAME_HEIGHT = 160,
+    parameter GAME_WIDTH = 640,
+    parameter GAME_HEIGHT = 480,
     parameter PADDLE_WIDTH = 5,
     parameter PADDLE_HEIGHT = 10,
     parameter BALL_SIZE = 5,
     parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
     parameter PADDLE_DISTANCE_FROM_EDGE = 20,
-    parameter BORDER_WIDTH = 20
+    parameter BORDER_WIDTH = 100
 )(
     input clk,          // 100 MHz clock from Nexys4 DDR
     output hsync,   // Horizontal sync
@@ -34,11 +34,13 @@ module vga_bw#(
     // VGA sync signal generator
     vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(x), .y(y));
 
+    wire border = (x < BORDER_WIDTH) || (x > GAME_WIDTH - BORDER_WIDTH) || (y < BORDER_WIDTH) || (y > GAME_HEIGHT - BORDER_WIDTH);
+    wire final_display = border;
+    
     reg video;
-    always @(posedge clk) begin
-        video <= (x & 5'b10000) && active;  // Base condition: Only draw within the active display area
+    always @(posedge clk_25MHz) begin
+        video <= final_display && active;  // Base condition: Only draw within the active display area
     end
-
 
     // Assign the same B&W signal to all color channels
     assign vga_r = video ? 4'b1111 : 4'b0000;

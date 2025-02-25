@@ -21,8 +21,8 @@
 
 
 module pong #(
-    parameter GAME_WIDTH = 210,
-    parameter GAME_HEIGHT = 160,
+    parameter GAME_WIDTH = 640,
+    parameter GAME_HEIGHT = 480,
     parameter PADDLE_WIDTH = 5,
     parameter PADDLE_HEIGHT = 10,
     parameter BALL_SIZE = 5,
