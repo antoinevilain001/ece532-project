@@ -22,6 +22,7 @@
 
 module vga_sync(
     input clk,             // 25 MHz clock
+    input resetn,
     output reg hsync,      // Horizontal sync
     output reg vsync,      // Vertical sync
     output reg active,     // High when pixels are in the visible area
@@ -41,32 +42,45 @@ module vga_sync(
     localparam V_FRONT_PORCH = 10;   // Vertical front porch
     localparam V_TOTAL_TIME  = V_SYNC_TIME + V_BACK_PORCH + V_ACTIVE_TIME + V_FRONT_PORCH; // Total frame time (525 lines)
 
-    // Initialize x and y to 0
     initial begin
-        x = 0;
-        y = 0;
+        x <= 100;
+        y <= 100;
+        hsync <= 1; // active low
+        vsync <= 1; // active low
+        active <= 0;
     end
 
     always @(posedge clk) begin
-        // Increment X coordinate
-        if (x < H_TOTAL_TIME - 1)
-            x <= x + 1;
-        else begin
+        if (0) begin
             x <= 0;
-            // Increment Y coordinate
-            if (y < V_TOTAL_TIME - 1)
-                y <= y + 1;
-            else
-                y <= 0;
+            y <= 0;
+        end else begin
+            // Increment X coordinate
+            if (x < H_TOTAL_TIME - 1)
+                x <= x + 1;
+            else begin
+                x <= 0;
+                // Increment Y coordinate
+                if (y < V_TOTAL_TIME - 1)
+                    y <= y + 1;
+                else
+                    y <= 0;
+            end
         end
     end
 
     // Generate sync pulses
     always @(posedge clk) begin
-        hsync  <= (x >= H_SYNC_TIME);  // Active low sync pulse
-        vsync  <= (y >= V_SYNC_TIME);  // Active low sync pulse
-        active <= (x >= H_SYNC_TIME + H_BACK_PORCH) && (x < H_SYNC_TIME + H_BACK_PORCH + H_ACTIVE_TIME) &&
-                  (y >= V_SYNC_TIME + V_BACK_PORCH) && (y < V_SYNC_TIME + V_BACK_PORCH + V_ACTIVE_TIME);
+        if (0) begin
+            hsync <= 1; // active low
+            vsync <= 1; // active low
+            active <= 0;
+        end else begin
+            hsync  <= (x >= H_SYNC_TIME);  // Active low sync pulse
+            vsync  <= (y >= V_SYNC_TIME);  // Active low sync pulse
+            active <= (x >= H_SYNC_TIME + H_BACK_PORCH) && (x < H_SYNC_TIME + H_BACK_PORCH + H_ACTIVE_TIME) &&
+                      (y >= V_SYNC_TIME + V_BACK_PORCH) && (y < V_SYNC_TIME + V_BACK_PORCH + V_ACTIVE_TIME);
+        end
     end
 endmodule
 

@@ -12,6 +12,7 @@ module vga_bw#(
     parameter BORDER_WIDTH = 50
 )(
     input clk,          // 100 MHz clock from Nexys4 DDR
+    input resetn,
     output hsync,   // Horizontal sync
     output vsync,   // Vertical sync
     output [3:0] vga_r, // Red (4-bit)
@@ -37,7 +38,7 @@ module vga_bw#(
     // the current positions
     wire [9:0] vball_x = 300;
     wire [9:0] vball_y = 250;
-    wire [9:0] vpaddle1_x = 80;
+    wire [9:0] vpaddle1_x = 120;
     wire [9:0] vpaddle1_y = 340;
     wire [9:0] vpaddle2_x = 500;
     wire [9:0] vpaddle2_y = 310;

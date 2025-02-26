@@ -56,6 +56,7 @@ module top #(
         .PADDLE_DISTANCE_FROM_EDGE(PADDLE_DISTANCE_FROM_EDGE)
     ) vga_instance (
         .clk(clk),
+        .resetn(resetn),
         .hsync(hsync),
         .vsync(vsync),
         .vga_r(vga_r),
