@@ -9,7 +9,7 @@ module vga_bw#(
     parameter BALL_SIZE = 5,
     parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
     parameter PADDLE_DISTANCE_FROM_EDGE = 20,
-    parameter BORDER_WIDTH = 50
+    parameter BORDER_WIDTH = 1
 )(
     input clk,          // 100 MHz clock from Nexys4 DDR
     input resetn,
@@ -26,14 +26,20 @@ module vga_bw#(
     input [9:0] paddle2_y
 );
     wire active;
-    wire [9:0] x, y;
+    reg [9:0] x, y;
     wire clk_25MHz;
 
     // Generate 25 MHz clock from 100 MHz input clock
     clock_divider clkdiv(.clk_in(clk), .clk_out(clk_25MHz));
 
     // VGA sync signal generator
-    vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(x), .y(y));
+    wire [9:0] hcount;
+    wire [9:0] vcount;
+    vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(hcount), .y(vcount));
+    always @(posedge clk_25MHz) begin
+        x <= hcount;
+        y <= vcount;
+    end
 
     // the current positions
     wire [9:0] vball_x = 300;
@@ -43,16 +49,16 @@ module vga_bw#(
     wire [9:0] vpaddle2_x = 500;
     wire [9:0] vpaddle2_y = 310;
     
-    wire border_left = (x > 0) && (x < BORDER_WIDTH);
-    wire border_right =  (x > GAME_WIDTH - BORDER_WIDTH) && (x < GAME_WIDTH);
-    wire border_top = (y > 0) && (y < BORDER_WIDTH);
-    wire border_bottom = (y > GAME_HEIGHT - BORDER_WIDTH) && (y < GAME_HEIGHT);
+    wire border_left = (x >= 0) && (x < BORDER_WIDTH);
+    wire border_right =  (x >= GAME_WIDTH - BORDER_WIDTH) && (x < GAME_WIDTH);
+    wire border_top = (y >= 0) && (y < BORDER_WIDTH);
+    wire border_bottom = (y >= GAME_HEIGHT - BORDER_WIDTH) && (y < GAME_HEIGHT);
     wire border = border_left || border_right || border_bottom || border_top;
     wire centerlines = (x == GAME_WIDTH >> 1) || (y == GAME_HEIGHT >> 1);
     
-    wire ball = (x > vball_x) && (x < vball_x + BALL_SIZE) && (y > vball_y) && (y < vball_y + BALL_SIZE);
-    wire paddle1 = (x > vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y > vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
-    wire paddle2 = (x > vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y > vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
+    wire ball = (x >= vball_x) && (x < vball_x + BALL_SIZE) && (y >= vball_y) && (y < vball_y + BALL_SIZE);
+    wire paddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
+    wire paddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
     
     wire final_display = border || centerlines || ball || paddle1 || paddle2;
     
