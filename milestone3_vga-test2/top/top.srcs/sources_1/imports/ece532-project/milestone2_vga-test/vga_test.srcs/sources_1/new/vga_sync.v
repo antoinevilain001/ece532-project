@@ -42,16 +42,8 @@ module vga_sync(
     localparam V_FRONT_PORCH = 10;   // Vertical front porch
     localparam V_TOTAL_TIME  = V_SYNC_TIME + V_BACK_PORCH + V_ACTIVE_TIME + V_FRONT_PORCH; // Total frame time (525 lines)
 
-    initial begin
-        x <= 100;
-        y <= 100;
-        hsync <= 1; // active low
-        vsync <= 1; // active low
-        active <= 0;
-    end
-
     always @(posedge clk) begin
-        if (0) begin
+        if (0) begin // never reset
             x <= 0;
             y <= 0;
         end else begin
@@ -71,7 +63,7 @@ module vga_sync(
 
     // Generate sync pulses
     always @(posedge clk) begin
-        if (0) begin
+        if (0) begin // never reset
             hsync <= 1; // active low
             vsync <= 1; // active low
             active <= 0;
