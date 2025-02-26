@@ -26,14 +26,20 @@ module vga_bw#(
     input [9:0] paddle2_y
 );
     wire active;
-    wire [9:0] x, y;
+    reg [9:0] x, y;
     wire clk_25MHz;
 
     // Generate 25 MHz clock from 100 MHz input clock
     clock_divider clkdiv(.clk_in(clk), .clk_out(clk_25MHz));
 
     // VGA sync signal generator
-    vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(x), .y(y));
+    wire [9:0] hcount;
+    wire [9:0] vcount;
+    vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(hcount), .y(vcount));
+    always @(posedge clk_25MHz) begin
+        x <= hcount;
+        y <= vcount;
+    end
 
     // the current positions
     wire [9:0] vball_x = 300;
