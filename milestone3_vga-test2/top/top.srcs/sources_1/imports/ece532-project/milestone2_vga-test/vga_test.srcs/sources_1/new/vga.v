@@ -41,23 +41,27 @@ module vga_bw#(
     // the current positions
     wire [9:0] vball_x = 300;
     wire [9:0] vball_y = 250;
-    wire [9:0] vpaddle1_x = 120;
+    wire [9:0] vpaddle1_x = 80;
     wire [9:0] vpaddle1_y = 340;
     wire [9:0] vpaddle2_x = 500;
     wire [9:0] vpaddle2_y = 310;
     
-    wire border_left = (x >= 0) && (x < BORDER_WIDTH);
-    wire border_right = (x >= GAME_WIDTH - BORDER_WIDTH) && (x < GAME_WIDTH);
-    wire border_top = (y >= 0) && (y < BORDER_WIDTH);
-    wire border_bottom = (y >= GAME_HEIGHT - BORDER_WIDTH) && (y < GAME_HEIGHT);
+    wire border_left = (x == 0) || (x == 2);
+    wire border_right = (x == GAME_WIDTH - 1) || (x == GAME_WIDTH - 3);
+    wire border_top = (y == 0) || (y == 2);
+    wire border_bottom = (y == GAME_HEIGHT - 1) || (y == GAME_HEIGHT - 3);
     wire border = border_left || border_right || border_bottom || border_top;
     wire centerlines = (x == GAME_WIDTH >> 1) || (y == GAME_HEIGHT >> 1);
     
-    wire ball = (x >= vball_x) && (x < vball_x + BALL_SIZE) && (y >= vball_y) && (y < vball_y + BALL_SIZE);
-    wire paddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
-    wire paddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
+    wire vball = (x >= vball_x) && (x < vball_x + BALL_SIZE) && (y >= vball_y) && (y < vball_y + BALL_SIZE);
+    wire vpaddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
+    wire vpaddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
     
-    wire final_display = border || centerlines || ball || paddle1 || paddle2 || (x == 2) || (x == 638) || (y == 2) || (y == 478);
+    wire ball_trace = (x == ball_x) || (y == ball_y);
+    wire paddle1_trace = (x == paddle1_x) || (y == paddle1_y);
+    wire paddle2_trace = (x == paddle2_x) || (y == paddle2_y);
+    
+    wire final_display = border || vball || vpaddle1 || vpaddle2 || ball_trace || paddle1_trace || paddle2_trace;
     
     reg video;
     always @(posedge clk_25MHz) begin
