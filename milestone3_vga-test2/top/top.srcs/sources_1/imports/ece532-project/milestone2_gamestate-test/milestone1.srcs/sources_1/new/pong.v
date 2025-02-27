@@ -101,7 +101,7 @@ module pong #(
     always@(posedge clk) begin
         if (!resetn) begin
             paddle1_x <= PADDLE_DISTANCE_FROM_EDGE;
-            paddle2_x <= GAME_WIDTH - PADDLE_DISTANCE_FROM_EDGE;
+            paddle2_x <= GAME_WIDTH - PADDLE_DISTANCE_FROM_EDGE - PADDLE_WIDTH;
             paddle1_y <= GAME_HEIGHT / 2;
             paddle2_y <= GAME_HEIGHT / 2;
         end

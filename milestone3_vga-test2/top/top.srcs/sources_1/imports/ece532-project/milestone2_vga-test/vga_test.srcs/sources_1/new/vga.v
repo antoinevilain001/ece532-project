@@ -39,12 +39,12 @@ module vga_bw#(
     assign y = vcount;
 
     // the current positions
-    wire [9:0] vball_x = 300;
-    wire [9:0] vball_y = 250;
-    wire [9:0] vpaddle1_x = 80;
-    wire [9:0] vpaddle1_y = 340;
-    wire [9:0] vpaddle2_x = 500;
-    wire [9:0] vpaddle2_y = 310;
+    wire [9:0] vball_x = ball_x;
+    wire [9:0] vball_y = ball_y;
+    wire [9:0] vpaddle1_x = paddle1_x;
+    wire [9:0] vpaddle1_y = paddle1_y;
+    wire [9:0] vpaddle2_x = paddle2_x;
+    wire [9:0] vpaddle2_y = paddle2_y;
     
     wire border_left = (x == 0) || (x == 2);
     wire border_right = (x == GAME_WIDTH - 1) || (x == GAME_WIDTH - 3);
