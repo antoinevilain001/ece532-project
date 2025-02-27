@@ -23,9 +23,9 @@
 module top #(
     parameter GAME_WIDTH = 640,
     parameter GAME_HEIGHT = 480,
-    parameter PADDLE_WIDTH = 15,
-    parameter PADDLE_HEIGHT = 40,
-    parameter BALL_SIZE = 20,
+    parameter PADDLE_WIDTH = 10,
+    parameter PADDLE_HEIGHT = 50,
+    parameter BALL_SIZE = 10,
     parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
     parameter PADDLE_DISTANCE_FROM_EDGE = 100
     )(

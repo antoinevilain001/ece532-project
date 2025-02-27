@@ -26,20 +26,17 @@ module vga_bw#(
     input [9:0] paddle2_y
 );
     wire active;
-    reg [9:0] x, y;
+    wire [9:0] x, y;
+    wire [9:0] hcount, vcount;
     wire clk_25MHz;
 
     // Generate 25 MHz clock from 100 MHz input clock
     clock_divider clkdiv(.clk_in(clk), .clk_out(clk_25MHz));
 
     // VGA sync signal generator
-    wire [9:0] hcount;
-    wire [9:0] vcount;
     vga_sync vga(.clk(clk_25MHz), .hsync(hsync), .vsync(vsync), .active(active), .x(hcount), .y(vcount));
-    always @(posedge clk_25MHz) begin
-        x <= hcount;
-        y <= vcount;
-    end
+    assign x = hcount;
+    assign y = vcount;
 
     // the current positions
     wire [9:0] vball_x = 300;
@@ -50,7 +47,7 @@ module vga_bw#(
     wire [9:0] vpaddle2_y = 310;
     
     wire border_left = (x >= 0) && (x < BORDER_WIDTH);
-    wire border_right =  (x >= GAME_WIDTH - BORDER_WIDTH) && (x < GAME_WIDTH);
+    wire border_right = (x >= GAME_WIDTH - BORDER_WIDTH) && (x < GAME_WIDTH);
     wire border_top = (y >= 0) && (y < BORDER_WIDTH);
     wire border_bottom = (y >= GAME_HEIGHT - BORDER_WIDTH) && (y < GAME_HEIGHT);
     wire border = border_left || border_right || border_bottom || border_top;
@@ -60,7 +57,7 @@ module vga_bw#(
     wire paddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
     wire paddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
     
-    wire final_display = border || centerlines || ball || paddle1 || paddle2;
+    wire final_display = border || centerlines || ball || paddle1 || paddle2 || (x == 2) || (x == 638) || (y == 2) || (y == 478);
     
     reg video;
     always @(posedge clk_25MHz) begin
