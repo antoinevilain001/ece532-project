@@ -14,7 +14,8 @@ module pong #(
     parameter PADDLE_HEIGHT = 10,
     parameter BALL_SIZE = 5,
     parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
-    parameter PADDLE_DISTANCE_FROM_EDGE = 20
+    parameter PADDLE_DISTANCE_FROM_EDGE = 20,
+    parameter GAME_BORDER = 2
 )(
     input clk,
     input resetn,
@@ -59,22 +60,22 @@ module pong #(
     // update ball position
     always@(posedge clk) begin
         if (!resetn) begin
-            ball_xspeed <= 1;
-            ball_yspeed <= 0;
+            ball_xspeed <= 2;
+            ball_yspeed <= 1;
             ball_x <= GAME_WIDTH / 2;
             ball_y <= GAME_HEIGHT / 2;
         end
         else begin
             if (update_game) begin
                 // collision detection
-                if (ball_x > GAME_WIDTH || ball_x < 0) begin
+                if (ball_x + BALL_SIZE >= GAME_WIDTH - 1 - GAME_BORDER || ball_x <= 0 + GAME_BORDER) begin
                     ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= ball_x - ball_xspeed; // get away from boarder
+                    ball_x <= ball_x - ball_xspeed; // get away from border
                 end
                 else begin
                     ball_x <= ball_x + ball_xspeed;
                 end
-                if (ball_y > GAME_HEIGHT || ball_y < 0) begin
+                if (ball_y + BALL_SIZE >= GAME_HEIGHT - 1 - GAME_BORDER || ball_y <= 0 + GAME_BORDER) begin
                     ball_yspeed <= ball_yspeed * -1;
                     ball_y <= ball_y - ball_yspeed;
                 end
