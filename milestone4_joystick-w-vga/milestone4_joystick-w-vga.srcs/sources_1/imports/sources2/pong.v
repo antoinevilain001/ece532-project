@@ -25,6 +25,8 @@ module pong #(
     output reg [9:0] paddle2_y,
     output reg [9:0] ball_x,
     output reg [9:0] ball_y,
+    output reg [9:0] score1,
+    output reg [9:0] score2,
     output reg [31:0] update_game_counter,
     output reg update_game // expose how often the game is being updated for testing
     );
@@ -95,13 +97,13 @@ module pong #(
         else begin
             if (update_game) begin
                 // paddle 1
-                if (user_dir == 3) begin // user wants to move up
+                if (user_dir == 2'b10) begin // user wants to move up
                     // move if able
                     if (paddle1_y > 0) begin
                         paddle1_y <= paddle1_y - 1;
                     end
                 end
-                if (user_dir == 1) begin // user wants to move down
+                if (user_dir == 2'b01) begin // user wants to move down
                     // move if able
                     if (paddle1_y < GAME_HEIGHT) begin
                         paddle1_y <= paddle1_y + 1;
@@ -112,6 +114,17 @@ module pong #(
                 paddle2_y <= ball_y;
                 
             end
+        end
+    end
+    
+    // score counter
+    always @(posedge clk) begin
+        if (!resetn) begin
+            score1 <= 0;
+            score2 <= 0;
+        end else begin
+            score1 <= ball_x;
+            score2 <= ball_y;
         end
     end
     

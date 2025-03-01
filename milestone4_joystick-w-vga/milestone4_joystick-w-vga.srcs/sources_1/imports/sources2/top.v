@@ -36,7 +36,9 @@ module top #(
     output vsync,   // Vertical sync
     output [3:0] vga_r, // Red (4-bit)
     output [3:0] vga_g, // Green (4-bit)
-    output [3:0] vga_b  // Blue (4-bit)
+    output [3:0] vga_b,  // Blue (4-bit)
+    output [9:0] score1,
+    output [9:0] score2
     );
     
     // Signal declarations
@@ -89,6 +91,8 @@ module top #(
         .paddle2_y(paddle2_y),
         .ball_x(ball_x),
         .ball_y(ball_y),
+        .score1(score1),
+        .score2(score2),
         .update_game_counter(update_game_counter),
         .update_game(update_game)
     );

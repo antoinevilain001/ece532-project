@@ -37,7 +37,7 @@ module joystick(
     output MOSI;            // Port JA Pin 2
     output SCLK;            // Port JA Pin 4
     output [11:0] LED;      // LED 12 to 0
-    output [3:0] AN;        // Seven Segment Display Anode
+    output [7:0] AN;        // Seven Segment Display Anode
     output [6:0] SEG;       // Seven Segment Display Cathode
     input CALIBRATE;        // BTNU
     output reg [1:0] user_dir;  // whether to go up or down
@@ -90,7 +90,7 @@ module joystick(
     assign position_x_data = {joystick_data[25:24], joystick_data[39:32]};
     
     // turn on LED on PMOD
-    always @(CALIBRATE) begin
+    always @(posedge CLK) begin
         if (CALIBRATE == 1'b1) begin
             send_data <= 8'b10100100;
         end
@@ -113,6 +113,7 @@ module joystick(
     
     always @(posedge transmit) begin
         LED[11:10] <= user_dir;
+        LED[9] <= 1'b1; // always light
     end
     
     // turn on LED[1] or LED[0] if PMOD buttons pressed
