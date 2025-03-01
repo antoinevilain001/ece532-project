@@ -27,6 +27,7 @@ module joystick(
     AN,
     SEG,
     CALIBRATE
+    //user_dir
     );
     
     // declare ports
@@ -41,7 +42,8 @@ module joystick(
     output [3:0] AN;        // Seven Segment Display Anode
     output [6:0] SEG;       // Seven Segment Display Cathode
     input CALIBRATE;        // BTNU
-    
+    //output reg [1:0] user_dir;  // binary whether to go up or down
+    reg [1:0] user_dir;
     
     wire chip_select;
     wire MOSI;
@@ -100,13 +102,20 @@ module joystick(
         end
     end
     
+    
+    always @(posedge CLK) begin
+        if (position_y_data < 360) begin // down boundary
+            user_dir <= 2'b01;
+        end else if (position_y_data > 700) begin // up boundary
+            user_dir <= 2'b10;
+        end else begin
+            user_dir <= 2'b00;
+        end
+    end
+    
+    
     always @(posedge transmit) begin
-        if (SW[1]) begin
-            LED[11:2] = position_y_data;
-        end
-        else begin
-            LED[11:2] = position_x_data;
-        end
+        LED[11:10] <= user_dir;
     end
     
     // turn on LED[1] or LED[0] if PMOD buttons pressed
