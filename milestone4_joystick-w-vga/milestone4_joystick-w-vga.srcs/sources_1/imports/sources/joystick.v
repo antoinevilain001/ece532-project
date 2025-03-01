@@ -19,22 +19,20 @@ module joystick(
     CLK,
     RST,
     MISO,
-    SW,
     chip_select,
     MOSI,
     SCLK,
     LED,
     AN,
     SEG,
-    CALIBRATE
-    //user_dir
+    CALIBRATE,
+    user_dir
     );
     
     // declare ports
     input CLK;              // 100 MHz onboard clock
     input RST;              // BTND
     input MISO;             // Port JA Pin 3
-    input [1:0] SW;         // Switch 0 
     output chip_select;     // Port JA Pin 1
     output MOSI;            // Port JA Pin 2
     output SCLK;            // Port JA Pin 4
@@ -42,8 +40,7 @@ module joystick(
     output [3:0] AN;        // Seven Segment Display Anode
     output [6:0] SEG;       // Seven Segment Display Cathode
     input CALIBRATE;        // BTNU
-    //output reg [1:0] user_dir;  // binary whether to go up or down
-    reg [1:0] user_dir;
+    output reg [1:0] user_dir;  // whether to go up or down
     
     wire chip_select;
     wire MOSI;
@@ -98,7 +95,7 @@ module joystick(
             send_data <= 8'b10100100;
         end
         else begin
-            send_data <= {8'b1000000, SW[0]};
+            send_data <= {8'b1000000, (user_dir != 0)}; // light up anytime the paddle is either up or down
         end
     end
     
