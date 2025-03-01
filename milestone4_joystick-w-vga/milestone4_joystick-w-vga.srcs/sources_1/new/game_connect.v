@@ -65,8 +65,8 @@ module game_connect (
         .score2(score2)
     );
     
-    wire [9:0] disp_left = 450;
-    wire [9:0] disp_right = 210;
+    wire [9:0] disp_left = score1;
+    wire [9:0] disp_right = score2;
     // Instantiate scoreboard
     seven_seg_disp scoreboard(
         .CLK(clk),
