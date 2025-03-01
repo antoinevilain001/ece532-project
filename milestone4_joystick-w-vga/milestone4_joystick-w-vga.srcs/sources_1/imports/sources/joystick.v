@@ -104,9 +104,9 @@ module joystick(
     
     
     always @(posedge CLK) begin
-        if (position_y_data < 360) begin // down boundary
+        if (position_x_data < 360) begin // down boundary
             user_dir <= 2'b01;
-        end else if (position_y_data > 700) begin // up boundary
+        end else if (position_x_data > 700) begin // up boundary
             user_dir <= 2'b10;
         end else begin
             user_dir <= 2'b00;
