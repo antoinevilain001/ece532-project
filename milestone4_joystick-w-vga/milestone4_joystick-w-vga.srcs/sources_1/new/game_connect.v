@@ -37,8 +37,8 @@ module game_connect (
         .MOSI(MOSI),
         .SCLK(SCLK),
         .LED(LED),
-        .AN(AN),  // leave unconnected because will use 7seg for the score instead
-        .SEG(SEG), // leave unconnected becaus
+        .AN(),  // leave unconnected because will use 7seg for the score instead
+        .SEG(), // leave unconnected becaus
         .CALIBRATE(CALIBRATE),
         .user_dir(user_dir)
     );
@@ -64,17 +64,18 @@ module game_connect (
         .score1(score1),
         .score2(score2)
     );
-    /*
+    
+    wire [9:0] disp_left = 450;
+    wire [9:0] disp_right = 210;
     // Instantiate scoreboard
     seven_seg_disp scoreboard(
-        .CLK(CLK),
-        .RST(RST),
-        .x_pos(450),
-        .y_pos(210),
+        .CLK(clk),
+        .RST(!resetn),
+        .x_pos(disp_left),
+        .y_pos(disp_right),
         .AN(AN),
         .SEG(SEG)
     );
-    */
 
 endmodule
 
