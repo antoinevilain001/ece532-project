@@ -75,7 +75,7 @@ module pong #(
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
-                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE)
+                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH -2) // because ball_xspeed negative here
                     && (ball_y + BALL_SIZE >= paddle1_y)
                     && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
                         ball_xspeed <= ball_xspeed * -1;
@@ -83,7 +83,7 @@ module pong #(
                     end
                     // right paddle
                 else if ((ball_x + BALL_SIZE >= GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH))
-                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - PADDLE_DISTANCE_FROM_EDGE)
+                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH) + ball_xspeed)
                     && (ball_y + BALL_SIZE >= paddle2_y)
                     && (ball_y < paddle2_y + PADDLE_HEIGHT)) begin
                         ball_xspeed <= ball_xspeed * -1;
