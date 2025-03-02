@@ -37,7 +37,9 @@ module pong #(
     reg paddle2_ydir;
     reg [9:0] ball_xspeed; // from 0 to +/- 7 where - is left, + is right
     reg [9:0] ball_yspeed; // from 0 to +/- 7 where - is up, + is down
-    //reg [31:0] update_game_counter;
+
+    wire [9:0] ball_xspeed_abs; // manually 2's complement for some calculations
+    assign ball_xspeed_abs = (ball_xspeed[9] == 1) ? (~ball_xspeed + 1) : ball_xspeed;
     
     // game update counter
     always@(posedge clk) begin
@@ -75,7 +77,7 @@ module pong #(
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
-                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH -2) // because ball_xspeed negative here
+                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH - ball_xspeed_abs) // because ball_xspeed negative here
                     && (ball_y + BALL_SIZE >= paddle1_y)
                     && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
                         ball_xspeed <= ball_xspeed * -1;
