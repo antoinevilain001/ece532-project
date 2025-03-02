@@ -67,14 +67,35 @@ module pong #(
         end
         else begin
             if (update_game) begin
-                // collision detection
+                // x collision
+                    // left / right wall
                 if (ball_x + BALL_SIZE >= GAME_WIDTH - 1 - GAME_BORDER || ball_x <= 0 + GAME_BORDER) begin
                     ball_xspeed <= ball_xspeed * -1;
                     ball_x <= ball_x - ball_xspeed; // get away from border
                 end
+                    // left paddle
+                else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
+                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE)
+                    && (ball_y + BALL_SIZE >= paddle1_y)
+                    && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
+                        ball_xspeed <= ball_xspeed * -1;
+                        ball_x <= ball_x - ball_xspeed; // get away from paddle
+                    end
+                    // right paddle
+                else if ((ball_x + BALL_SIZE >= GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH))
+                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - PADDLE_DISTANCE_FROM_EDGE)
+                    && (ball_y + BALL_SIZE >= paddle2_y)
+                    && (ball_y < paddle2_y + PADDLE_HEIGHT)) begin
+                        ball_xspeed <= ball_xspeed * -1;
+                        ball_x <= ball_x - ball_xspeed; // get away from paddle
+                    end
                 else begin
                     ball_x <= ball_x + ball_xspeed;
                 end
+                
+                
+                // y collision
+                    // top / bottom wall
                 if (ball_y + BALL_SIZE >= GAME_HEIGHT - 1 - GAME_BORDER || ball_y <= 0 + GAME_BORDER) begin
                     ball_yspeed <= ball_yspeed * -1;
                     ball_y <= ball_y - ball_yspeed;
