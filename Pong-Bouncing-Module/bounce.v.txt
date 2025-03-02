@@ -1,0 +1,47 @@
+module pong_ball (
+    input clk,
+    input reset,
+    input [9:0] paddle1_y,
+    input [9:0] paddle2_y,
+    input [9:0] paddle_height,
+    input [9:0] screen_width,
+    input [9:0] screen_height,
+    output reg [9:0] ball_x,
+    output reg [9:0] ball_y,
+    output reg ball_dir_x,
+    output reg ball_dir_y
+);
+
+    reg [9:0] ball_speed_x = 2;
+    reg [9:0] ball_speed_y = 2;
+    
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            ball_x <= screen_width / 2;
+            ball_y <= screen_height / 2;
+            ball_dir_x <= 1;
+            ball_dir_y <= 1;
+        end else begin
+            if (ball_dir_x)
+                ball_x <= ball_x + ball_speed_x;
+            else
+                ball_x <= ball_x - ball_speed_x;
+
+            if (ball_dir_y)
+                ball_y <= ball_y + ball_speed_y;
+            else
+                ball_y <= ball_y - ball_speed_y;
+
+            if (ball_y <= 0 || ball_y >= screen_height)
+                ball_dir_y <= ~ball_dir_y;
+
+            if (ball_x <= 10 && (ball_y >= paddle1_y && ball_y <= paddle1_y + paddle_height)) begin
+                ball_dir_x <= ~ball_dir_x;
+                ball_speed_x <= ball_speed_x + 1;
+            end else if (ball_x >= screen_width - 10 && (ball_y >= paddle2_y && ball_y <= paddle2_y + paddle_height)) begin
+                ball_dir_x <= ~ball_dir_x;
+                ball_speed_x <= ball_speed_x + 1;
+            end
+        end
+    end
+endmodule
