@@ -37,6 +37,8 @@ module pong #(
     reg paddle2_ydir;
     reg [9:0] ball_xspeed; // from 0 to +/- 7 where - is left, + is right
     reg [9:0] ball_yspeed; // from 0 to +/- 7 where - is up, + is down
+    reg [9:0] paddle1_speed;
+    reg [9:0] paddle2_speed;
 
     wire [9:0] ball_xspeed_abs; // manually 2's complement for some calculations
     assign ball_xspeed_abs = (ball_xspeed[9] == 1) ? (~ball_xspeed + 1) : ball_xspeed;
@@ -59,6 +61,14 @@ module pong #(
         end
     end
     
+    // paddle speed
+    always@(posedge clk) begin
+        if (!resetn) begin
+            paddle1_speed <= 2;
+            paddle2_speed <= 2;
+        end
+    end
+    
     // update ball position
     always@(posedge clk) begin
         if (!resetn) begin
@@ -70,10 +80,17 @@ module pong #(
         else begin
             if (update_game) begin
                 // x collision
-                    // left / right wall
-                if (ball_x + BALL_SIZE >= GAME_WIDTH - 1 - GAME_BORDER || ball_x <= 0 + GAME_BORDER) begin
+                    // left wall
+                if (ball_x <= 0 + GAME_BORDER) begin
                     ball_xspeed <= ball_xspeed * -1;
                     ball_x <= ball_x - ball_xspeed; // get away from border
+                    score2 <= score2 + 1;
+                end
+                    // right wall
+                else if (ball_x + BALL_SIZE >= GAME_WIDTH - 1 - GAME_BORDER) begin
+                    ball_xspeed <= ball_xspeed * -1;
+                    ball_x <= ball_x - ball_xspeed; // get away from border
+                    score1 <= score1 + 1;
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
@@ -124,13 +141,13 @@ module pong #(
                 if (user_dir == 2'b10) begin // user wants to move up
                     // move if able
                     if (paddle1_y > 0) begin
-                        paddle1_y <= paddle1_y - 1;
+                        paddle1_y <= paddle1_y - paddle1_speed;
                     end
                 end
                 if (user_dir == 2'b01) begin // user wants to move down
                     // move if able
                     if (paddle1_y < GAME_HEIGHT) begin
-                        paddle1_y <= paddle1_y + 1;
+                        paddle1_y <= paddle1_y + paddle1_speed;
                     end
                 end
                 
@@ -141,15 +158,14 @@ module pong #(
         end
     end
     
+    /*
     // score counter
     always @(posedge clk) begin
         if (!resetn) begin
-            score1 <= 0;
-            score2 <= 0;
-        end else begin
-            score1 <= ball_x;
-            score2 <= ball_y;
+            score1 <= 4;
+            score2 <= 4;
         end
     end
+    */
     
 endmodule
