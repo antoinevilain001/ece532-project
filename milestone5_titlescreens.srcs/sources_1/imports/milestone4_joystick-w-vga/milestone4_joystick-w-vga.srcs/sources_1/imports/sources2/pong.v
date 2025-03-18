@@ -62,7 +62,7 @@ module pong #(
     // update ball position
     always@(posedge clk) begin
         if (!resetn) begin
-            ball_xspeed <= 2;
+            ball_xspeed <= 3;
             ball_yspeed <= 1;
             ball_x <= GAME_WIDTH / 2;
             ball_y <= GAME_HEIGHT / 2;

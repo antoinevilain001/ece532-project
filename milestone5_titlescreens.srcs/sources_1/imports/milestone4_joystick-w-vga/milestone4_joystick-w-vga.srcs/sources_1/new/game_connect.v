@@ -21,7 +21,9 @@ module game_connect (
     output SCLK,        // SPI Clock
     output [11:0] LED,  // LEDs
     output [7:0] AN,    // 7-segment anodes
-    output [6:0] SEG    // 7-segment cathodes
+    output [6:0] SEG,    // 7-segment cathodes
+    input startgame,     // currently connected to down button, will potentially change
+    input gameover      // currently connected to middle button, will connect to game over logic module later
 );
 
     wire [1:0] user_dir;  // Direction output from joystick
@@ -62,7 +64,9 @@ module game_connect (
         .vga_g(vga_g),
         .vga_b(vga_b),
         .score1(score1),
-        .score2(score2)
+        .score2(score2),
+        .startgame(startgame),
+        .gameover(gameover)
     );
     
     wire [9:0] disp_left = score1;

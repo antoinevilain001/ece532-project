@@ -38,7 +38,9 @@ module top #(
     output [3:0] vga_g, // Green (4-bit)
     output [3:0] vga_b,  // Blue (4-bit)
     output [9:0] score1,
-    output [9:0] score2
+    output [9:0] score2,
+    input startgame,
+    input gameover
     );
     
     // Signal declarations
@@ -69,7 +71,9 @@ module top #(
         .paddle1_x(paddle1_x),
         .paddle1_y(paddle1_y),
         .paddle2_x(paddle2_x),
-        .paddle2_y(paddle2_y)
+        .paddle2_y(paddle2_y),
+        .startgame(startgame),
+        .gameover(gameover)
     );
     
     // Instantiate the pong module

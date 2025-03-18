@@ -118,9 +118,9 @@ set_property PACKAGE_PIN M18 [get_ports CALIBRATE]
 # startgame and gameover button inputs, to be changed, for testing purposes
 # ==============================
 # startgame down button
-#set_property IOSTANDARD LVCMOS33 [get_ports startgame]
-#set_property PACKAGE_PIN P17 [get_ports startgame]
+set_property IOSTANDARD LVCMOS33 [get_ports startgame]
+set_property PACKAGE_PIN P17 [get_ports startgame]
 
 # gameover middle button
-#set_property IOSTANDARD LVCMOS33 [get_ports gameover]
-#set_property PACKAGE_PIN N17 [get_ports gameover]
+set_property IOSTANDARD LVCMOS33 [get_ports gameover]
+set_property PACKAGE_PIN N17 [get_ports gameover]
