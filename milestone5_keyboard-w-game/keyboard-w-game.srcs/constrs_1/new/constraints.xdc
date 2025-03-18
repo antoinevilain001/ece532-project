@@ -1,0 +1,16 @@
+set_property PACKAGE_PIN E3 [get_ports CLK]
+set_property IOSTANDARD LVCMOS33 [get_ports CLK]
+set_property PACKAGE_PIN F4 [get_ports pclk]
+set_property IOSTANDARD LVCMOS33 [get_ports pclk]
+set_property PACKAGE_PIN B2 [get_ports pdata]
+set_property IOSTANDARD LVCMOS33 [get_ports pdata]
+set_property PULLUP true [get_ports pdata]
+set_property PULLUP true [get_ports pclk]
+## LED0 and LED1
+set_property PACKAGE_PIN H17 [get_ports game_speedup] 
+set_property PACKAGE_PIN K15 [get_ports game_slowdown]
+set_property IOSTANDARD LVCMOS33 [get_ports game_speedup]
+set_property IOSTANDARD LVCMOS33 [get_ports game_slowdown]
+## Set the resetn to switch 0 for the moment (Nexys4 DDR)
+set_property PACKAGE_PIN J15 [get_ports resetn]
+set_property IOSTANDARD LVCMOS33 [get_ports resetn]
