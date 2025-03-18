@@ -69,13 +69,15 @@ module pong #(
         end
     end
     
-    // update ball position
+    // update ball position and score
     always@(posedge clk) begin
         if (!resetn) begin
             ball_xspeed <= 3;
             ball_yspeed <= 1;
             ball_x <= GAME_WIDTH / 2;
             ball_y <= GAME_HEIGHT / 2;
+            score1 <= 4;
+            score2 <= 4;
         end
         else begin
             if (update_game) begin
@@ -157,15 +159,6 @@ module pong #(
             end
         end
     end
-    
-    /*
-    // score counter
-    always @(posedge clk) begin
-        if (!resetn) begin
-            score1 <= 4;
-            score2 <= 4;
-        end
-    end
-    */
+
     
 endmodule

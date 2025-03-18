@@ -87,7 +87,7 @@ module top #(
         .PADDLE_DISTANCE_FROM_EDGE(PADDLE_DISTANCE_FROM_EDGE)
     ) pong_instance (
         .clk(clk),
-        .resetn(resetn),
+        .resetn(!startgame),
         .user_dir(user_dir),
         .paddle1_x(paddle1_x),
         .paddle1_y(paddle1_y),
