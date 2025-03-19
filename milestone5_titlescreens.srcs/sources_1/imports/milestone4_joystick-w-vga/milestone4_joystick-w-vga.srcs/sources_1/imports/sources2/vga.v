@@ -63,18 +63,18 @@ module vga_bw#(
     wire border_top = (y == 0) || (y == 2);
     wire border_bottom = (y == GAME_HEIGHT - 1) || (y == GAME_HEIGHT - 3);
     wire border = border_left || border_right || border_bottom || border_top;
-    wire centerlines = (x == GAME_WIDTH >> 1) || (y == GAME_HEIGHT >> 1);
+    //wire centerlines = (x == GAME_WIDTH >> 1) || (y == GAME_HEIGHT >> 1);
     
     wire vball = (x >= vball_x) && (x < vball_x + BALL_SIZE) && (y >= vball_y) && (y < vball_y + BALL_SIZE);
     wire vpaddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
     wire vpaddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
     
-    wire ball_trace = (x == ball_x) || (y == ball_y);
-    wire paddle1_trace = (x == paddle1_x) || (y == paddle1_y);
-    wire paddle2_trace = (x == paddle2_x) || (y == paddle2_y);
+    //wire ball_trace = (x == ball_x) || (y == ball_y);
+    //wire paddle1_trace = (x == paddle1_x) || (y == paddle1_y);
+    //wire paddle2_trace = (x == paddle2_x) || (y == paddle2_y);
     
     //wire final_display = border || vball || vpaddle1 || vpaddle2 || ball_trace || paddle1_trace || paddle2_trace;
-    wire game_display = border || vball || vpaddle1 || vpaddle2 || ball_trace || paddle1_trace || paddle2_trace;
+    wire game_display = border || vball || vpaddle1 || vpaddle2;
     
     // define title display
     wire letter_p = (x >= 130) && (x <= 140) && (y >= 100) && (y <= 220) ||

@@ -80,8 +80,8 @@ module pong #(
     // paddle speed
     always@(posedge clk) begin
         if (!resetn) begin
-            paddle1_speed <= 4;
-            paddle2_speed <= 4;
+            paddle1_speed <= 3;
+            paddle2_speed <= 3;
         end
     end
     
@@ -112,23 +112,46 @@ module pong #(
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
-                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH - ball_xspeed_abs)) begin // because ball_xspeed negative here
-                        // top of paddle
-                        if ((ball_y + BALL_SIZE >= paddle1_y)
-                        && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
-                            ball_xspeed <= ball_xspeed * -1;
-                            ball_x <= ball_x - ball_xspeed; // get away from paddle
+                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH - ball_xspeed_abs) // because ball_xspeed negative here
+                    && (ball_y + BALL_SIZE >= paddle1_y)
+                    && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
+                        ball_xspeed <= ball_xspeed * -1;
+                        ball_x <= ball_x - ball_xspeed; // get away from paddle
+                        // yspeed: which part of the paddle?
+                        if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*1/8) begin
+                            ball_yspeed <= -4;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*2/8) begin
+                            ball_yspeed <= -3;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*3/8) begin
+                            ball_yspeed <= -2;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*4/8) begin
+                            ball_yspeed <= -1;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*5/8) begin
+                            ball_yspeed <= 1;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*6/8) begin
+                            ball_yspeed <= 2;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*7/8) begin
+                            ball_yspeed <= 3;
+                        end
+                        else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*8/8) begin
+                            ball_yspeed <= 4;
                         end
                     end
                     // right paddle
                 else if ((ball_x + BALL_SIZE >= GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH))
-                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH) + ball_xspeed)) begin
-                        // top of paddle
-                        if ((ball_y + BALL_SIZE >= paddle2_y)
-                        && (ball_y < paddle2_y + PADDLE_HEIGHT)) begin
-                            ball_xspeed <= ball_xspeed * -1;
-                            ball_x <= ball_x - ball_xspeed; // get away from paddle
-                        end
+                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH) + ball_xspeed)
+                    && (ball_y + BALL_SIZE >= paddle2_y)
+                    && (ball_y < paddle2_y + PADDLE_HEIGHT)) begin
+                        ball_xspeed <= ball_xspeed * -1;
+                        ball_x <= ball_x - ball_xspeed; // get away from paddle
+                        // yspeed: which part of the paddle?
+
                     end
                 else begin
                     ball_x <= ball_x + ball_xspeed;
@@ -168,7 +191,7 @@ module pong #(
                 end
                 if (user_dir == 2'b01) begin // user wants to move down
                     // move if able
-                    if (paddle1_y < GAME_HEIGHT) begin
+                    if (paddle1_y + PADDLE_HEIGHT < GAME_HEIGHT - 1) begin
                         paddle1_y <= paddle1_y + paddle1_speed;
                     end
                 end
