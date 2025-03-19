@@ -49,6 +49,8 @@ module top #(
     wire [9:0] ball_x, ball_y;
     wire [31:0] update_game_counter;
     wire update_game;
+    wire [1:0] player_won;
+    wire show_gameover_screen = gameover || (player_won != 0);
     
     vga_bw #(
         .GAME_WIDTH(GAME_WIDTH),
@@ -73,7 +75,7 @@ module top #(
         .paddle2_x(paddle2_x),
         .paddle2_y(paddle2_y),
         .startgame(startgame),
-        .gameover(gameover)
+        .gameover(show_gameover_screen)
     );
     
     // Instantiate the pong module
@@ -97,6 +99,7 @@ module top #(
         .ball_y(ball_y),
         .score1(score1),
         .score2(score2),
+        .player_won(player_won),
         .update_game_counter(update_game_counter),
         .update_game(update_game)
     );

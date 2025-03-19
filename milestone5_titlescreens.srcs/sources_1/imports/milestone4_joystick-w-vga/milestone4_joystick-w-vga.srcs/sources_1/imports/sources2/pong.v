@@ -28,6 +28,7 @@ module pong #(
     output reg [9:0] ball_y,
     output reg [9:0] score1,
     output reg [9:0] score2,
+    output reg [1:0] player_won,
     output reg [31:0] update_game_counter,
     output reg update_game // expose how often the game is being updated for testing
     );
@@ -61,18 +62,33 @@ module pong #(
         end
     end
     
+    // check if player won
+    always@(posedge clk) begin
+        if (!resetn) begin
+            player_won <= 2'b00;
+        end
+        else begin
+            if (score1 == 7) begin
+                player_won <= 2'b01;
+            end
+            else if (score2 == 7) begin
+                player_won <= 2'b10;
+            end
+        end
+    end
+    
     // paddle speed
     always@(posedge clk) begin
         if (!resetn) begin
-            paddle1_speed <= 2;
-            paddle2_speed <= 2;
+            paddle1_speed <= 4;
+            paddle2_speed <= 4;
         end
     end
     
     // update ball position and score
     always@(posedge clk) begin
         if (!resetn) begin
-            ball_xspeed <= 3;
+            ball_xspeed <= 4;
             ball_yspeed <= 1;
             ball_x <= GAME_WIDTH / 2;
             ball_y <= GAME_HEIGHT / 2;
