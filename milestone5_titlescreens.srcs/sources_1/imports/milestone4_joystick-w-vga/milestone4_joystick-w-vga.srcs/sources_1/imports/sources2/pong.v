@@ -112,19 +112,23 @@ module pong #(
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
-                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH - ball_xspeed_abs) // because ball_xspeed negative here
-                    && (ball_y + BALL_SIZE >= paddle1_y)
-                    && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
-                        ball_xspeed <= ball_xspeed * -1;
-                        ball_x <= ball_x - ball_xspeed; // get away from paddle
+                    && (ball_x >= PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH - ball_xspeed_abs)) begin // because ball_xspeed negative here
+                        // top of paddle
+                        if ((ball_y + BALL_SIZE >= paddle1_y)
+                        && (ball_y < paddle1_y + PADDLE_HEIGHT)) begin
+                            ball_xspeed <= ball_xspeed * -1;
+                            ball_x <= ball_x - ball_xspeed; // get away from paddle
+                        end
                     end
                     // right paddle
                 else if ((ball_x + BALL_SIZE >= GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH))
-                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH) + ball_xspeed)
-                    && (ball_y + BALL_SIZE >= paddle2_y)
-                    && (ball_y < paddle2_y + PADDLE_HEIGHT)) begin
-                        ball_xspeed <= ball_xspeed * -1;
-                        ball_x <= ball_x - ball_xspeed; // get away from paddle
+                    && (ball_x + BALL_SIZE < GAME_WIDTH - 1 - (PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH) + ball_xspeed)) begin
+                        // top of paddle
+                        if ((ball_y + BALL_SIZE >= paddle2_y)
+                        && (ball_y < paddle2_y + PADDLE_HEIGHT)) begin
+                            ball_xspeed <= ball_xspeed * -1;
+                            ball_x <= ball_x - ball_xspeed; // get away from paddle
+                        end
                     end
                 else begin
                     ball_x <= ball_x + ball_xspeed;
