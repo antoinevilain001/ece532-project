@@ -110,6 +110,16 @@ set_property PACKAGE_PIN D18 [get_ports MOSI]
 set_property PACKAGE_PIN G17 [get_ports SCLK]
 set_property PACKAGE_PIN C17 [get_ports chip_select]
 
+set_property IOSTANDARD LVCMOS33 [get_ports MISO2]
+set_property IOSTANDARD LVCMOS33 [get_ports MOSI2]
+set_property IOSTANDARD LVCMOS33 [get_ports SCLK2]
+set_property IOSTANDARD LVCMOS33 [get_ports chip_select2]
+
+set_property PACKAGE_PIN G1 [get_ports MISO2]
+set_property PACKAGE_PIN H1 [get_ports MOSI2]
+set_property PACKAGE_PIN G3 [get_ports SCLK2]
+set_property PACKAGE_PIN H4 [get_ports chip_select2]
+
 # Calibrate input (up button)
 set_property IOSTANDARD LVCMOS33 [get_ports CALIBRATE]
 set_property PACKAGE_PIN M18 [get_ports CALIBRATE]

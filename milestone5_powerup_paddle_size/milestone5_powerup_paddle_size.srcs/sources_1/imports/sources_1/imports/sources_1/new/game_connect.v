@@ -19,6 +19,10 @@ module game_connect (
     output chip_select, // SPI Chip Select
     output MOSI,        // SPI MOSI
     output SCLK,        // SPI Clock
+    input MISO2,
+    output chip_select2,
+    output MOSI2,
+    output SCLK2,
     output [11:0] LED,  // LEDs
     output [7:0] AN,    // 7-segment anodes
     output [6:0] SEG,    // 7-segment cathodes
@@ -27,11 +31,13 @@ module game_connect (
 );
 
     wire [1:0] user_dir;  // Direction output from joystick
+    wire [1:0] user_dir2;
     wire [9:0] score1;
     wire [9:0] score2;
     
     assign LED[9] = 1'b1;
     assign LED[11:10] = user_dir;
+    assign LED[8:7] = user_dir2;
 
     // Instantiate the joystick module
     joystick joystick_inst (
@@ -41,6 +47,17 @@ module game_connect (
         .chip_select(chip_select),
         .MOSI(MOSI),
         .SCLK(SCLK),
+        .CALIBRATE(CALIBRATE),
+        .user_dir(user_dir2)
+    );
+    
+    joystick joystick_inst2 (
+        .CLK(clk),
+        .RST(!resetn), // uses active-high reset?
+        .MISO(MISO2),
+        .chip_select(chip_select2),
+        .MOSI(MOSI2),
+        .SCLK(SCLK2),
         .CALIBRATE(CALIBRATE),
         .user_dir(user_dir)
     );
