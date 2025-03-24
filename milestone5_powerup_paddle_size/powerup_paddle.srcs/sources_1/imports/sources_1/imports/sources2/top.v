@@ -77,6 +77,11 @@ module top #(
         .paddle1_y(paddle1_y),
         .paddle2_x(paddle2_x),
         .paddle2_y(paddle2_y),
+        .paddle1_height(paddle1_height),
+        .paddle2_height(paddle2_height),
+        .powerup_paddle_x(powerup_paddle_x),
+        .powerup_paddle_y(powerup_paddle_y),
+        .powerup_paddle_spawn(powerup_paddle_spawn),
         .startgame(startgame),
         .gameover(show_gameover_screen)
     );
