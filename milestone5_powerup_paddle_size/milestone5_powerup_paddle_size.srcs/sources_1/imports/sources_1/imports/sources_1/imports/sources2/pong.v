@@ -20,6 +20,7 @@ module pong #(
     input clk,
     input resetn,
     input [1:0] user_dir,
+    input [1:0] game_state,
     output reg [9:0] paddle1_x,
     output reg [9:0] paddle1_y,
     output reg [9:0] paddle2_x,
@@ -80,7 +81,7 @@ module pong #(
             update_game_counter <= GAME_UPDATE_DELAY;
             update_game <= 0;
         end
-        else begin
+        else if (game_state == 2'b01) begin
             if (update_game_counter == 0) begin
                 update_game_counter <= GAME_UPDATE_DELAY;
                 update_game <= 1;

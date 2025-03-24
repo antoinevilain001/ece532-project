@@ -22,9 +22,6 @@ module joystick(
     chip_select,
     MOSI,
     SCLK,
-    LED,
-    AN,
-    SEG,
     CALIBRATE,
     user_dir
     );
@@ -36,18 +33,12 @@ module joystick(
     output chip_select;     // Port JA Pin 1
     output MOSI;            // Port JA Pin 2
     output SCLK;            // Port JA Pin 4
-    output [11:0] LED;      // LED 12 to 0
-    output [7:0] AN;        // Seven Segment Display Anode
-    output [6:0] SEG;       // Seven Segment Display Cathode
     input CALIBRATE;        // BTNU
     output reg [1:0] user_dir;  // whether to go up or down
     
     wire chip_select;
     wire MOSI;
     wire SCLK;
-    reg [11:0] LED;
-    wire [7:0] AN;
-    wire [6:0] SEG;
     
     reg [7:0] send_data;
     wire transmit;
@@ -75,17 +66,6 @@ module joystick(
         .CLKOUT(transmit)
     );
     
-    // take position data output to seven segment display
-    seven_seg_disp SSD(
-        .CLK(CLK),
-        .RST(RST),
-        .x_pos(position_x_data),
-        .y_pos(position_y_data),
-        .AN(AN),
-        .SEG(SEG)
-    );
-    
-    
     assign position_y_data = {joystick_data[9:8], joystick_data[23:16]};
     assign position_x_data = {joystick_data[25:24], joystick_data[39:32]};
     
@@ -107,22 +87,6 @@ module joystick(
             user_dir <= 2'b10;
         end else begin
             user_dir <= 2'b00;
-        end
-    end
-    
-    
-    always @(posedge transmit) begin
-        LED[11:10] <= user_dir;
-        LED[9] <= 1'b1; // always light
-    end
-    
-    // turn on LED[1] or LED[0] if PMOD buttons pressed
-    always @(transmit or RST or joystick_data) begin
-        if (RST == 1'b1) begin
-            LED[1:0] <= 2'b00;
-        end
-        else begin
-            LED[1:0] <= {joystick_data[1], joystick_data[0]};
         end
     end
     

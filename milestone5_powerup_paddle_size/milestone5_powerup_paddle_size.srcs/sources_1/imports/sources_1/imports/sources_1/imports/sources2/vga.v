@@ -35,7 +35,8 @@ module vga_bw#(
     input [9:0] powerup_paddle_y,
     input powerup_paddle_spawn,
     input startgame,
-    input gameover
+    input gameover,
+    output [1:0] game_state
 );
     wire active;
     wire [9:0] x, y;

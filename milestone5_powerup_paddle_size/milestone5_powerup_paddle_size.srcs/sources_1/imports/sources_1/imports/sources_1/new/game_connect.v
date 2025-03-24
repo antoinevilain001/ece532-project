@@ -29,6 +29,9 @@ module game_connect (
     wire [1:0] user_dir;  // Direction output from joystick
     wire [9:0] score1;
     wire [9:0] score2;
+    
+    assign LED[9] = 1'b1;
+    assign LED[11:10] = user_dir;
 
     // Instantiate the joystick module
     joystick joystick_inst (
@@ -38,9 +41,6 @@ module game_connect (
         .chip_select(chip_select),
         .MOSI(MOSI),
         .SCLK(SCLK),
-        .LED(LED),
-        .AN(),  // leave unconnected because will use 7seg for the score instead
-        .SEG(), // leave unconnected becaus
         .CALIBRATE(CALIBRATE),
         .user_dir(user_dir)
     );
