@@ -71,8 +71,8 @@ module vga_bw#(
     //wire centerlines = (x == GAME_WIDTH >> 1) || (y == GAME_HEIGHT >> 1);
     
     wire vball = (x >= vball_x) && (x < vball_x + BALL_SIZE) && (y >= vball_y) && (y < vball_y + BALL_SIZE);
-    wire vpaddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + PADDLE_HEIGHT);
-    wire vpaddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + PADDLE_HEIGHT);
+    wire vpaddle1 = (x >= vpaddle1_x) && (x < vpaddle1_x + PADDLE_WIDTH) && (y >= vpaddle1_y) && (y < vpaddle1_y + paddle1_height);
+    wire vpaddle2 = (x >= vpaddle2_x) && (x < vpaddle2_x + PADDLE_WIDTH) && (y >= vpaddle2_y) && (y < vpaddle2_y + paddle2_height);
     
     //wire ball_trace = (x == ball_x) || (y == ball_y);
     //wire paddle1_trace = (x == paddle1_x) || (y == paddle1_y);
