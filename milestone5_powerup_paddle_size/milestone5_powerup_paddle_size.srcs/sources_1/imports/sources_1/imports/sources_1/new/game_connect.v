@@ -78,6 +78,7 @@ module game_connect (
         .clk(clk),
         .resetn(resetn),
         .user_dir(user_dir),
+        .user_dir2(user_dir2),
         .hsync(hsync),
         .vsync(vsync),
         .vga_r(vga_r),

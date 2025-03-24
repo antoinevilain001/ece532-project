@@ -32,6 +32,7 @@ module top #(
     input clk,          // 100 MHz clock from Nexys4 DDR
     input resetn,
     input [1:0] user_dir,
+    input [1:0] user_dir2,
     output hsync,   // Horizontal sync
     output vsync,   // Vertical sync
     output [3:0] vga_r, // Red (4-bit)
@@ -96,6 +97,7 @@ module top #(
         .clk(clk),
         .resetn(!startgame),
         .user_dir(user_dir),
+        .user_dir2(user_dir2),
         .paddle1_x(paddle1_x),
         .paddle1_y(paddle1_y),
         .paddle2_x(paddle2_x),

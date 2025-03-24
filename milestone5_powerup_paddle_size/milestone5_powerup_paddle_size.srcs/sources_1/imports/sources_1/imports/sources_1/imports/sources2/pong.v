@@ -20,6 +20,7 @@ module pong #(
     input clk,
     input resetn,
     input [1:0] user_dir,
+    input [1:0] user_dir2,
     input [1:0] game_state,
     output reg [9:0] paddle1_x,
     output reg [9:0] paddle1_y,
@@ -231,8 +232,19 @@ module pong #(
                     end
                 end
                 
-                // paddle 2, perfect AI for the moment (center of paddle tracks ball)
-                paddle2_y <= ball_y;
+                // paddle 2
+                if (user_dir2 == 2'b10) begin // user wants to move up
+                    // move if able
+                    if (paddle2_y > 0) begin
+                        paddle2_y <= paddle2_y - paddle2_speed;
+                    end
+                end
+                if (user_dir2 == 2'b01) begin // user wants to move down
+                    // move if able
+                    if (paddle2_y + PADDLE_HEIGHT < GAME_HEIGHT - 1) begin
+                        paddle2_y <= paddle2_y + paddle2_speed;
+                    end
+                end
                 
             end
         end
