@@ -41,7 +41,8 @@ module top #(
     output [9:0] score1,
     output [9:0] score2,
     input startgame,
-    input gameover
+    input gameover,
+    output powerup_paddle_spawn
     );
     
     // Signal declarations
@@ -79,6 +80,11 @@ module top #(
         .paddle1_y(paddle1_y),
         .paddle2_x(paddle2_x),
         .paddle2_y(paddle2_y),
+        .paddle1_height(paddle1_height),
+        .paddle2_height(paddle2_height),
+        .powerup_paddle_x(powerup_paddle_x),
+        .powerup_paddle_y(powerup_paddle_y),
+        .powerup_paddle_spawn(powerup_paddle_spawn),
         .startgame(startgame),
         .gameover(show_gameover_screen),
         .game_state(game_state)
@@ -95,7 +101,7 @@ module top #(
         .PADDLE_DISTANCE_FROM_EDGE(PADDLE_DISTANCE_FROM_EDGE)
     ) pong_instance (
         .clk(clk),
-        .resetn(!startgame),
+        .resetn(resetn),
         .user_dir(user_dir),
         .user_dir2(user_dir2),
         .paddle1_x(paddle1_x),

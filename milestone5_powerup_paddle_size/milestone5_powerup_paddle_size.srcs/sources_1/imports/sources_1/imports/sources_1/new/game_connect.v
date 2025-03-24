@@ -87,7 +87,8 @@ module game_connect (
         .score1(score1),
         .score2(score2),
         .startgame(startgame),
-        .gameover(gameover)
+        .gameover(gameover),
+        .powerup_paddle_spawn(LED[3])
     );
     
     wire [9:0] disp_left = score1;

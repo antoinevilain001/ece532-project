@@ -46,12 +46,12 @@ module powerup_paddle #(
             powerup_timer <= 0;
             paddle1_height <= DEFAULT_PADDLE_HEIGHT;
             paddle2_height <= DEFAULT_PADDLE_HEIGHT;
-            powerup_delay <= 240 + ($random % 240);
+            powerup_delay <= 10; //240 + ($random % 240);
         end
         else begin
             if (!powerup_active && !powerup_spawn && !powerup_delay) begin // spawn powerup if not active, not in use, and delay countdown finished 
-                powerup_x <= $random % (GAME_WIDTH - POWERUP_SIZE - PADDLE_DISTANCE_FROM_EDGE - 50);
-                powerup_y <= $random % (GAME_HEIGHT - POWERUP_SIZE - 50);
+                powerup_x <= 300; //$random % (GAME_WIDTH - POWERUP_SIZE - PADDLE_DISTANCE_FROM_EDGE - 50);
+                powerup_y <= 300; //$random % (GAME_HEIGHT - POWERUP_SIZE - 50);
                 powerup_spawn <= 1;
             end
             else if (powerup_spawn && collision) begin // powerup is on board and ball collides
@@ -77,7 +77,7 @@ module powerup_paddle #(
             powerup_timer <= 0;
             paddle1_height <= DEFAULT_PADDLE_HEIGHT;
             paddle2_height <= DEFAULT_PADDLE_HEIGHT;
-            powerup_delay <= 240 + ( $random % 240 );   // wait 10 to 20 seconds before spawning next powerup
+            powerup_delay <= 10; //240 + ( $random % 240 );   // wait 10 to 20 seconds before spawning next powerup
             
         end
         else if (powerup_timer > 0 && powerup_timer < POWERUP_DURATION) begin
