@@ -150,27 +150,35 @@ module pong #(
                         // yspeed: which part of the paddle?
                         if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*1/8) begin
                             ball_yspeed <= -4;
+                            ball_y <= ball_y - 4;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*2/8) begin
                             ball_yspeed <= -3;
+                            ball_y <= ball_y - 3;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*3/8) begin
                             ball_yspeed <= -2;
+                            ball_y <= ball_y - 2;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*4/8) begin
                             ball_yspeed <= -1;
+                            ball_y <= ball_y - 1;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*5/8) begin
                             ball_yspeed <= 1;
+                            ball_y <= ball_y + 1;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*6/8) begin
                             ball_yspeed <= 2;
+                            ball_y <= ball_y + 2;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*7/8) begin
                             ball_yspeed <= 3;
+                            ball_y <= ball_y + 3;
                         end
                         else if (ball_y < paddle1_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*8/8) begin
                             ball_yspeed <= 4;
+                            ball_y <= ball_y + 4;
                         end
                     end
                     // right paddle
@@ -185,19 +193,15 @@ module pong #(
                     end
                 else begin
                     ball_x <= ball_x + ball_xspeed;
-                end
-                
-                
-                // y collision
-                    // top / bottom wall
-                if (ball_y + BALL_SIZE >= GAME_HEIGHT - 1 - GAME_BORDER || ball_y <= 0 + GAME_BORDER) begin
-                    ball_yspeed <= ball_yspeed * -1;
-                    ball_y <= ball_y - ball_yspeed;
-                end
-                else begin
-                    ball_y <= ball_y + ball_yspeed;
-                end
-                
+                    // y collision
+                        // top / bottom wall
+                    if (ball_y + BALL_SIZE >= GAME_HEIGHT - 1 - GAME_BORDER || ball_y <= 0 + GAME_BORDER) begin
+                        ball_yspeed <= ball_yspeed * -1;
+                        ball_y <= ball_y - ball_yspeed;
+                    end else begin
+                        ball_y <= ball_y + ball_yspeed;
+                    end
+                end              
             end
         end
     end

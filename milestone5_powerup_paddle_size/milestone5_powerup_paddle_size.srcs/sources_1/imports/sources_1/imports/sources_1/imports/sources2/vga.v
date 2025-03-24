@@ -82,8 +82,8 @@ module vga_bw#(
     wire game_display = border || vball || vpaddle1 || vpaddle2;
     
     // define paddle size powerup display, hard coded for size 3, looks like +
-    wire powerup_paddle = (x == powerup_paddle_x) && (y >= powerup_paddle_y) && (y <= powerup_paddle_y + 2) ||
-                          (y == powerup_paddle_y) && (x >= powerup_paddle_x) && (x <= powerup_paddle_x + 2);
+    wire powerup_paddle = (x == powerup_paddle_x) || (x == powerup_paddle_x + 2*powerup_paddle_spawn) ||
+                          (y == powerup_paddle_y) ;
     
     wire game_display_and_powerup_paddle = game_display || powerup_paddle;
     
@@ -187,7 +187,7 @@ module vga_bw#(
     // change final display depending on game state
     wire final_display = (game_state == TITLE_SCREEN) ? title_display :
                          (game_state == GAMEPLAY && powerup_paddle_spawn) ? game_display_and_powerup_paddle :
-                         (game_state == GAMEPLAY && !powerup_paddle_spawn) ? game_display :
+                         (game_state == GAMEPLAY && !powerup_paddle_spawn) ? game_display_and_powerup_paddle : // temporarily show it always
                          (game_state == GAMEOVER) ? over_display : 1'b0;
     
     reg video;
