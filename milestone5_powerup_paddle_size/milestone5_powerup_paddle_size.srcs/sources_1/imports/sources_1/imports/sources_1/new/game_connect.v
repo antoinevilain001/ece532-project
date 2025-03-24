@@ -31,6 +31,7 @@ module game_connect (
 );
 
     wire [1:0] user_dir;  // Direction output from joystick
+    wire [1:0] user_dir_inverted;
     wire [1:0] user_dir2;
     wire [9:0] score1;
     wire [9:0] score2;
@@ -38,6 +39,8 @@ module game_connect (
     assign LED[9] = 1'b1;
     assign LED[11:10] = user_dir;
     assign LED[8:7] = user_dir2;
+    
+    assign user_dir = (user_dir_inverted == 2'b10 ? 2'b01 : user_dir_inverted == 2'b01 ? 2'b10 : 2'b00);
 
     // Instantiate the joystick module
     joystick joystick_inst (
@@ -59,7 +62,7 @@ module game_connect (
         .MOSI(MOSI2),
         .SCLK(SCLK2),
         .CALIBRATE(CALIBRATE),
-        .user_dir(user_dir)
+        .user_dir(user_dir_inverted)
     );
 
     // Instantiate the game logic (top) module
