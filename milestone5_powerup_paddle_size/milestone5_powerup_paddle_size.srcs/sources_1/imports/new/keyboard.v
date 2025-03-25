@@ -13,10 +13,7 @@ module keyboard(
     input pclk,
     input pdata,
     input resetn,
-    output [6:0] SEG,
-    output [7:0] AN,
-    output DP,
-    output [15:0] LED
+    output spacebar_pressed
     );
     
     wire [31:0] scancode;
@@ -37,14 +34,6 @@ module keyboard(
         .keyout(scancode[31:0])
     );
     
-    seven_seg_disp seven_inst (
-        .data(scancode),
-        .clk(CLK),
-        .SEG(SEG),
-        .AN(AN),
-        .dp(DP)
-    );
-    
     
     reg spacebar_state;
     always @(posedge CLK) begin
@@ -58,13 +47,8 @@ module keyboard(
             spacebar_state <= 1;
         end
     end
-
-    // Output wire for pressed state
-    wire spacebar_pressed = spacebar_state;
-    assign LED[0] = spacebar_pressed;
     
-    wire spacebar_released = (scancode[15:0] == 16'hF029);
-    assign LED[1] = spacebar_released;
+    assign spacebar_pressed = spacebar_state; // assign to output
     
     
 endmodule

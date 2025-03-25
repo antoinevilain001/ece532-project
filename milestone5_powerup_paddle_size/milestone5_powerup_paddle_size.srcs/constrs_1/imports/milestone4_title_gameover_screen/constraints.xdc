@@ -134,3 +134,13 @@ set_property PACKAGE_PIN P17 [get_ports startgame]
 # gameover middle button
 set_property IOSTANDARD LVCMOS33 [get_ports gameover]
 set_property PACKAGE_PIN N17 [get_ports gameover]
+
+# ==============================
+# USB connections for keyboard
+# ==============================
+set_property PACKAGE_PIN F4 [get_ports pclk]
+set_property IOSTANDARD LVCMOS33 [get_ports pclk]
+set_property PACKAGE_PIN B2 [get_ports pdata]
+set_property IOSTANDARD LVCMOS33 [get_ports pdata]
+set_property PULLUP true [get_ports pdata]
+set_property PULLUP true [get_ports pclk]

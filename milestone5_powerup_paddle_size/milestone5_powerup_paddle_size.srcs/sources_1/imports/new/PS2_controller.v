@@ -44,13 +44,11 @@ module PS2_controller(
     end
     
     always @(posedge flag) begin
-        if (prev_data != data) begin
-            key[31:24] <= key[23:16];
-            key[23:16] <= key[15:8];
-            key[15:8] <= key[7:0];
-            key[7:0] <= data;
-            prev_data <= data;
-        end
+        key[31:24] <= key[23:16];
+        key[23:16] <= key[15:8];
+        key[15:8] <= key[7:0];
+        key[7:0] <= data;
+        prev_data <= data;
     end
     
     assign keyout = key;

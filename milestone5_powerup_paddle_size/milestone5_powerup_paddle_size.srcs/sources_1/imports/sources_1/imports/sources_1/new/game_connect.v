@@ -9,13 +9,13 @@
 module game_connect (
     input clk,
     input resetn,
-    input MISO,         // SPI MISO from joystick
-    input CALIBRATE,    // Calibration button
-    output hsync,
-    output vsync,
+    input CALIBRATE,    // Calibration button for joystick
+    output hsync,       // for VGA
+    output vsync,       // for VGA
     output [3:0] vga_r,
     output [3:0] vga_g,
     output [3:0] vga_b,
+    input MISO,         // SPI MISO from joystick
     output chip_select, // SPI Chip Select
     output MOSI,        // SPI MOSI
     output SCLK,        // SPI Clock
@@ -23,6 +23,8 @@ module game_connect (
     output chip_select2,
     output MOSI2,
     output SCLK2,
+    input pclk,         // USB port
+    input pdata,        // USB port
     output [11:0] LED,  // LEDs
     output [7:0] AN,    // 7-segment anodes
     output [6:0] SEG,    // 7-segment cathodes
@@ -41,6 +43,9 @@ module game_connect (
     assign LED[8:7] = user_dir2;
     
     assign user_dir = (user_dir_inverted == 2'b10 ? 2'b01 : user_dir_inverted == 2'b01 ? 2'b10 : 2'b00);
+    
+    wire spacebar_pressed;
+    assign LED[6] = spacebar_pressed;
 
     // Instantiate the joystick module
     joystick joystick_inst (
@@ -86,7 +91,7 @@ module game_connect (
         .vga_b(vga_b),
         .score1(score1),
         .score2(score2),
-        .startgame(startgame),
+        .startgame(startgame || spacebar_pressed),
         .gameover(gameover),
         .powerup_paddle_spawn(LED[3])
     );
@@ -101,6 +106,14 @@ module game_connect (
         .y_pos(disp_right),
         .AN(AN),
         .SEG(SEG)
+    );
+    
+    keyboard keyboard_inst(
+        .CLK(clk),
+        .resetn(resetn),
+        .pclk(pclk),
+        .pdata(pdata),
+        .spacebar_pressed(spacebar_pressed)
     );
 
 endmodule
