@@ -44,13 +44,13 @@ module PS2_controller(
     end
     
     always @(posedge flag) begin
-        if (prev_data != data) begin
+        // if (prev_data != data) begin // want to track regardless of whether data is the same or not
             key[31:24] <= key[23:16];
             key[23:16] <= key[15:8];
             key[15:8] <= key[7:0];
             key[7:0] <= data;
             prev_data <= data;
-        end
+        // end
     end
     
     assign keyout = key;
