@@ -13,7 +13,7 @@ module pong #(
     parameter PADDLE_WIDTH = 5,
     parameter PADDLE_HEIGHT = 10,
     parameter BALL_SIZE = 5,
-    parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
+    parameter GAME_UPDATE_DELAY = 3333333, // 30fps // 4166667, // 24 frames per second with a 100MHz clock
     parameter PADDLE_DISTANCE_FROM_EDGE = 20,
     parameter GAME_BORDER = 2
 )(
@@ -100,15 +100,21 @@ module pong #(
                 // x collision
                     // left wall
                 if (ball_x <= 0 + GAME_BORDER) begin
-                    ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= ball_x - ball_xspeed; // get away from border
                     score2 <= score2 + 1;
+                    // reset after score
+                    ball_x <= GAME_WIDTH / 2;
+                    ball_y <= GAME_HEIGHT / 2;
+                    ball_xspeed <= ball_xspeed * -1;
+                    ball_yspeed <= ball_y[0]; // pseudo-random
                 end
                     // right wall
                 else if (ball_x + BALL_SIZE >= GAME_WIDTH - 1 - GAME_BORDER) begin
-                    ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= ball_x - ball_xspeed; // get away from border
                     score1 <= score1 + 1;
+                    // reset after score
+                    ball_x <= GAME_WIDTH / 2;
+                    ball_y <= GAME_HEIGHT / 2;
+                    ball_xspeed <= ball_xspeed * -1;
+                    ball_yspeed <= ball_y[0]; // pseudo-random
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)

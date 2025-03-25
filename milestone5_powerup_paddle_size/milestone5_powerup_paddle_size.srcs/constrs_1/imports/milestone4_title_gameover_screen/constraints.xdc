@@ -4,8 +4,8 @@ set_property IOSTANDARD LVCMOS33 [get_ports clk]
 create_clock -period 10.000 [get_ports clk]
 
 ## Set the resetn to switch 0 for the moment (Nexys4 DDR)
-set_property PACKAGE_PIN J15 [get_ports resetn]
-set_property IOSTANDARD LVCMOS33 [get_ports resetn]
+set_property PACKAGE_PIN J15 [get_ports SW0]
+set_property IOSTANDARD LVCMOS33 [get_ports SW0]
 
 ## VGA Output (HSYNC, VSYNC)
 set_property PACKAGE_PIN B11 [get_ports hsync]
@@ -127,7 +127,7 @@ set_property PACKAGE_PIN M18 [get_ports CALIBRATE]
 # ==============================
 # startgame and gameover button inputs, to be changed, for testing purposes
 # ==============================
-# startgame down button
+# startgame left button
 set_property IOSTANDARD LVCMOS33 [get_ports startgame]
 set_property PACKAGE_PIN P17 [get_ports startgame]
 
@@ -135,6 +135,9 @@ set_property PACKAGE_PIN P17 [get_ports startgame]
 set_property IOSTANDARD LVCMOS33 [get_ports gameover]
 set_property PACKAGE_PIN N17 [get_ports gameover]
 
+# down button, potentially for reset?
+set_property IOSTANDARD LVCMOS33 [get_ports buttonD]
+set_property PACKAGE_PIN P18 [get_ports buttonD]
 # ==============================
 # USB connections for keyboard
 # ==============================

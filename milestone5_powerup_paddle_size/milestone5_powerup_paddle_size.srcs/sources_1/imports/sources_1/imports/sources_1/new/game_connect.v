@@ -8,7 +8,7 @@
 
 module game_connect (
     input clk,
-    input resetn,
+    input SW0,
     input CALIBRATE,    // Calibration button for joystick
     output hsync,       // for VGA
     output vsync,       // for VGA
@@ -28,9 +28,11 @@ module game_connect (
     output [11:0] LED,  // LEDs
     output [7:0] AN,    // 7-segment anodes
     output [6:0] SEG,    // 7-segment cathodes
+    input buttonD,      // secondary reset
     input startgame,     // currently connected to down button, will potentially change
     input gameover      // currently connected to middle button, will connect to game over logic module later
 );
+    wire resetn = !buttonD;
 
     wire [1:0] user_dir;  // Direction output from joystick
     wire [1:0] user_dir_inverted;
