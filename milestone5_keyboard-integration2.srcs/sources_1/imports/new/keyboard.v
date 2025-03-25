@@ -66,5 +66,20 @@ module keyboard(
     wire spacebar_released = (scancode[15:0] == 16'hF029);
     assign LED[1] = spacebar_released;
     
+    reg r_state;
+    always @(posedge CLK) begin
+        if (scancode[7:0] == 8'hF0) begin
+            // Next byte is the break code identifier, wait for next byte
+            r_state <= r_state;  // Hold state
+        end else if (scancode[15:0] == 16'hF02d) begin // spacebar released
+            r_state <= 0;
+        end else if (scancode[7:0] == 8'h2d) begin
+            // Spacebar press detected
+            r_state <= 1;
+        end
+    end
+    
+    assign LED[2] = r_state;
+    
     
 endmodule
