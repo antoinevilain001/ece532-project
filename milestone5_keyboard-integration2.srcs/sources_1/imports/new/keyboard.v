@@ -45,6 +45,7 @@ module keyboard(
         .dp(DP)
     );
     
-    assign LED = scancode[15:0];
+    wire spacebar_released = (scancode[15:0] == 16'hF029);
+    assign LED[0] = spacebar_released;
     
 endmodule
