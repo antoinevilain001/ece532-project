@@ -135,7 +135,7 @@ module pong #(
                     score2 <= score2 + 1;
                     // reset ball after score
                     ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= GAME_WIDTH / 2;
+                    ball_x <= paddle1_x + PADDLE_WIDTH + 2*BALL_SIZE; // reset on the left side going right
                     ball_y <= GAME_HEIGHT / 2;
                     ball_yspeed <= (ball_y[0] ? 1 : -1); // use this bit for pseudo-random
                 end
@@ -144,7 +144,7 @@ module pong #(
                     score1 <= score1 + 1;
                     // reset ball after score
                     ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= GAME_WIDTH / 2;
+                    ball_x <= paddle2_x - BALL_SIZE - 2*BALL_SIZE; // reset on the right side going left
                     ball_y <= GAME_HEIGHT / 2;
                     ball_yspeed <= (ball_y[0] ? 1 : -1); // use this bit for pseudo-random
                 end
