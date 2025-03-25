@@ -13,7 +13,7 @@ module pong #(
     parameter PADDLE_WIDTH = 5,
     parameter PADDLE_HEIGHT = 10,
     parameter BALL_SIZE = 5,
-    parameter GAME_UPDATE_DELAY = 4166667, // 24 frames per second with a 100MHz clock
+    parameter GAME_UPDATE_DELAY = 3333333, // 30fps // 4166667, // 24 frames per second with a 100MHz clock
     parameter PADDLE_DISTANCE_FROM_EDGE = 20,
     parameter GAME_BORDER = 2
 )(
@@ -132,15 +132,21 @@ module pong #(
                 // x collision
                     // left wall
                 if (ball_x <= 0 + GAME_BORDER) begin
-                    ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= ball_x - ball_xspeed; // get away from border
                     score2 <= score2 + 1;
+                    // reset ball after score
+                    ball_xspeed <= ball_xspeed * -1;
+                    ball_x <= GAME_WIDTH / 2;
+                    ball_y <= GAME_HEIGHT / 2;
+                    ball_yspeed <= (ball_y[0] ? 1 : -1); // use this bit for pseudo-random
                 end
                     // right wall
                 else if (ball_x + BALL_SIZE >= GAME_WIDTH - 1 - GAME_BORDER) begin
-                    ball_xspeed <= ball_xspeed * -1;
-                    ball_x <= ball_x - ball_xspeed; // get away from border
                     score1 <= score1 + 1;
+                    // reset ball after score
+                    ball_xspeed <= ball_xspeed * -1;
+                    ball_x <= GAME_WIDTH / 2;
+                    ball_y <= GAME_HEIGHT / 2;
+                    ball_yspeed <= (ball_y[0] ? 1 : -1); // use this bit for pseudo-random
                 end
                     // left paddle
                 else if ((ball_x < PADDLE_DISTANCE_FROM_EDGE + PADDLE_WIDTH)
@@ -191,7 +197,38 @@ module pong #(
                         ball_xspeed <= ball_xspeed * -1;
                         ball_x <= ball_x - ball_xspeed; // get away from paddle
                         // yspeed: which part of the paddle?
-
+                        if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*1/8) begin
+                            ball_yspeed <= -4;
+                            ball_y <= ball_y - 4;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*2/8) begin
+                            ball_yspeed <= -3;
+                            ball_y <= ball_y - 3;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*3/8) begin
+                            ball_yspeed <= -2;
+                            ball_y <= ball_y - 2;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*4/8) begin
+                            ball_yspeed <= -1;
+                            ball_y <= ball_y - 1;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*5/8) begin
+                            ball_yspeed <= 1;
+                            ball_y <= ball_y + 1;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*6/8) begin
+                            ball_yspeed <= 2;
+                            ball_y <= ball_y + 2;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*7/8) begin
+                            ball_yspeed <= 3;
+                            ball_y <= ball_y + 3;
+                        end
+                        else if (ball_y < paddle2_y - BALL_SIZE + (PADDLE_HEIGHT + BALL_SIZE)*8/8) begin
+                            ball_yspeed <= 4;
+                            ball_y <= ball_y + 4;
+                        end
                     end
                 else begin
                     ball_x <= ball_x + ball_xspeed;
