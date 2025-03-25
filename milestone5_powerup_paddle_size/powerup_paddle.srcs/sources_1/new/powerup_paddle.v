@@ -23,18 +23,20 @@ module powerup_paddle #(
     output reg [9:0] powerup_y,
     output reg powerup_spawn            // powerup is spawned onto board, VGA needs to display
 );
-
+    
+    // wires and regs for control signals
     reg powerup_active;                 // powerup is in effect
     reg [9:0] powerup_timer;            // timer for how long powerup lasts
     reg [31:0] powerup_delay;           // randomize delay between powerup spawns
     
-    initial begin
-        paddle1_height = DEFAULT_PADDLE_HEIGHT;
-        paddle2_height = DEFAULT_PADDLE_HEIGHT;
-        powerup_active = 0;
-        powerup_spawn = 0;
+    // random LSFR, generates pseudo-random numbers
+    reg [15:0] lfsr = 16'hACE1;
+    always @(posedge clk) begin
+        if (!resetn) lfsr <= 16'hACE1;
+        else lfsr <= {lfsr[14:0], lfsr[15] ^ lfsr[13] ^ lfsr[5] ^ lfsr[2] ^ lfsr[8]};
     end
     
+    // collision detection control signal
     wire x_overlap = (ball_x + BALL_SIZE > powerup_x) && (ball_x < powerup_x + POWERUP_SIZE);
     wire y_overlap = (ball_y + BALL_SIZE > powerup_y) && (ball_y < powerup_y + POWERUP_SIZE);
     wire collision = x_overlap && y_overlap;
@@ -44,47 +46,60 @@ module powerup_paddle #(
         if (!resetn) begin
             powerup_active <= 0;
             powerup_timer <= 0;
-            paddle1_height = DEFAULT_PADDLE_HEIGHT;
-            paddle2_height = DEFAULT_PADDLE_HEIGHT;
-            powerup_delay = 240 + ($random % 240);
+            paddle1_height <= DEFAULT_PADDLE_HEIGHT;
+            paddle2_height <= DEFAULT_PADDLE_HEIGHT;
+            powerup_delay <= 240; // + ($random % 240); turns out $random doesnt work, not synthesizable onto FPGA
+            powerup_spawn <= 0;
         end
         else begin
-            if (!powerup_active && !powerup_spawn && !powerup_delay) begin // spawn powerup if not active, not in use, and delay countdown finished 
-                powerup_x <= $random % (GAME_WIDTH - POWERUP_SIZE - PADDLE_DISTANCE_FROM_EDGE - 50);
-                powerup_y <= $random % (GAME_HEIGHT - POWERUP_SIZE - 50);
-                powerup_spawn <= 1;
+            if (!powerup_active && !powerup_spawn) begin
+                // state 1: nothing, base game, delay between powerup spawn
+                if (powerup_delay == 0) begin
+                    // transition to state 2 powerup spawned onto board
+                    powerup_x <= lfsr[9:0] % (GAME_WIDTH - POWERUP_SIZE - PADDLE_DISTANCE_FROM_EDGE * 2 - 50);
+                    powerup_y <= (lfsr[9:0] >> 1) % (GAME_HEIGHT - POWERUP_SIZE - 50); 
+                    // generate powerup location using lfsr, note y is shifted by 1 to avoid x and y correlations
+                    powerup_spawn <= 1;
+                end 
+                else begin
+                    // state 1 powerup_delay not yet 0, so count down
+                    powerup_delay <= powerup_delay - 1;
+                end
             end
-            else if (powerup_spawn && collision) begin // powerup is on board and ball collides
+            
+            if (powerup_spawn && collision) begin
+                // transition to state 3 powerup is active
                 powerup_active <= 1;
                 powerup_spawn <= 0;
                 powerup_timer <= 1;
-                if (ball_xspeed > 0) begin // ball moving right, so left player gets powerup
+                if (ball_xspeed > 0) begin
+                    // ball is moving right, left player gets powerup
                     paddle1_height <= DEFAULT_PADDLE_HEIGHT * 2;
                     paddle2_height <= DEFAULT_PADDLE_HEIGHT / 2;
                 end
-                else begin // ball moving left, so right player gets powerup
-                    paddle2_height <= DEFAULT_PADDLE_HEIGHT * 2;
+                else begin
+                    // ball is moving left, right player gets powerup
                     paddle1_height <= DEFAULT_PADDLE_HEIGHT / 2;
+                    paddle2_height <= DEFAULT_PADDLE_HEIGHT * 2;
                 end
             end
-        end
-    end
-    
-    // powerup timer logic
-    always @(posedge update_game) begin
-        if (powerup_timer == POWERUP_DURATION) begin
-            powerup_active <= 0;
-            powerup_timer <= 0;
-            paddle1_height <= DEFAULT_PADDLE_HEIGHT;
-            paddle2_height <= DEFAULT_PADDLE_HEIGHT;
-            powerup_delay <= 240 + ( $random % 240 );   // wait 10 to 20 seconds before spawning next powerup
             
-        end
-        else if (powerup_timer > 0 && powerup_timer < POWERUP_DURATION) begin
-            powerup_timer <= powerup_timer + 1;
-        end
-        else begin
-            powerup_delay <= powerup_delay - 1;       // if powerup not active, start countdown to spawn next one
+            if (powerup_active) begin
+                if (powerup_timer < POWERUP_DURATION) begin
+                    // state 3 powerup active, powerup_timer increasing
+                    powerup_timer <= powerup_timer + 1;
+                end
+                else begin
+                    // transition to state 1 reset to base game
+                    powerup_active <= 0;
+                    // powerup_spawn already set to 0 earlier
+                    powerup_timer <= 0;
+                    paddle1_height <= DEFAULT_PADDLE_HEIGHT;
+                    paddle2_height <= DEFAULT_PADDLE_HEIGHT;
+                    powerup_delay <= 240 + (lfsr[8:0] % 240); // 9 bits of LFSR means up to 512
+                    // so technically 512 % 240, so powerup spawns will be more frequently 11~12s but thats ok
+                end
+            end
         end
     end
 

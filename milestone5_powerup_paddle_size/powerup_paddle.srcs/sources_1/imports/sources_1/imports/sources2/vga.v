@@ -82,8 +82,8 @@ module vga_bw#(
     wire game_display = border || vball || vpaddle1 || vpaddle2;
     
     // define paddle size powerup display, hard coded for size 3, looks like +
-    wire powerup_paddle = (x == powerup_paddle_x) && (y >= powerup_paddle_y) && (y <= powerup_paddle_y + 2) ||
-                          (y == powerup_paddle_y) && (x >= powerup_paddle_x) && (x <= powerup_paddle_x + 2);
+    wire powerup_paddle = (x == powerup_paddle_x) && (y >= powerup_paddle_y - 1) && (y <= powerup_paddle_y + 1) ||
+                          (y == powerup_paddle_y) && (x >= powerup_paddle_x - 1) && (x <= powerup_paddle_x + 1);
     
     wire game_display_and_powerup_paddle = game_display || powerup_paddle;
     
