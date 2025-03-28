@@ -4,4 +4,5 @@
 *.ip_user_files
 *.runs
 *.xpr
+*.sim
 vivado*
