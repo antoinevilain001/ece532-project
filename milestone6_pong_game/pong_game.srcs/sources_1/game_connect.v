@@ -32,7 +32,7 @@ module game_connect (
     input startgame,     // currently connected to down button, will potentially change
     input gameover      // currently connected to middle button, will connect to game over logic module later
 );
-    wire resetn = !buttonD;
+    wire resetn = !buttonD && !r_pressed;
 
     wire [1:0] user_dir;  // Direction output from joystick
     wire [1:0] user_dir_inverted;
@@ -48,6 +48,8 @@ module game_connect (
     
     wire spacebar_pressed;
     assign LED[6] = spacebar_pressed;
+    wire r_pressed;
+    assign LED[5] = r_pressed;
 
     // Instantiate the joystick module
     joystick joystick_inst (
@@ -115,7 +117,8 @@ module game_connect (
         .resetn(resetn),
         .pclk(pclk),
         .pdata(pdata),
-        .spacebar_pressed(spacebar_pressed)
+        .spacebar_pressed(spacebar_pressed),
+        .r_pressed(r_pressed)
     );
 
 endmodule

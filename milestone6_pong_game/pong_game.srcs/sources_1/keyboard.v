@@ -13,7 +13,8 @@ module keyboard(
     input pclk,
     input pdata,
     input resetn,
-    output spacebar_pressed
+    output spacebar_pressed,
+    output r_pressed
     );
     
     wire [31:0] scancode;
@@ -49,6 +50,22 @@ module keyboard(
     end
     
     assign spacebar_pressed = spacebar_state; // assign to output
+    
+    
+    reg r_state;
+    always @(posedge CLK) begin
+        if (scancode[7:0] == 8'hF0) begin
+            // Next byte is the break code identifier, wait for next byte
+            r_state <= r_state;  // Hold state
+        end else if (scancode[15:0] == 16'hF02d) begin // spacebar released
+            r_state <= 0;
+        end else if (scancode[7:0] == 8'h2d) begin
+            // Spacebar press detected
+            r_state <= 1;
+        end
+    end
+    
+    assign r_pressed = r_state; // assign to output
     
     
 endmodule
