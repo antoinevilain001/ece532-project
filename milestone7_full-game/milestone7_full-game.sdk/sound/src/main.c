@@ -3,7 +3,6 @@
 #include "xtmrctr.h"
 #include "stdio.h"
 
-#define GPIO_DEVICE_ID XPAR_AXI_GPIO_0_DEVICE_ID
 #define TIMER_DEVICE_ID XPAR_AXI_TIMER_0_DEVICE_ID
 #define PWM_GPIO_CHANNEL 1
 #define AMP_GPIO_BIT 1
@@ -17,6 +16,7 @@
 
 XGpio Gpio;
 XGpio Gpio1;
+XGpio Gpio2;
 
 XTmrCtr Timer;
 
@@ -41,10 +41,15 @@ void play_square_wave(u32 frequency_hz, u32 duration_ms) {
 }
 
 int main() {
-    XGpio_Initialize(&Gpio, GPIO_DEVICE_ID);
+    XGpio_Initialize(&Gpio, XPAR_AXI_GPIO_0_DEVICE_ID);
     XGpio_Initialize(&Gpio1, XPAR_AXI_GPIO_1_DEVICE_ID);
+    XGpio_Initialize(&Gpio2, XPAR_AXI_GPIO_2_DEVICE_ID);
+    XGpio_SetDataDirection(&Gpio2, 1, 0x0); // Outputs
     XGpio_SetDataDirection(&Gpio1, 1, 0x1); // Input
     XGpio_SetDataDirection(&Gpio, PWM_GPIO_CHANNEL, ~0x3); // GPIO[0:1] as outputs
+
+    // Write to lights
+    XGpio_DiscreteWrite(&Gpio2, 1, 0x3);
 
     XTmrCtr_Initialize(&Timer, TIMER_DEVICE_ID);
     XTmrCtr_SetOptions(&Timer, 0, XTC_AUTO_RELOAD_OPTION);
