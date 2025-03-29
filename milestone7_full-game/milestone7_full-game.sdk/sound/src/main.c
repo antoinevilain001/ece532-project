@@ -45,7 +45,7 @@ int main() {
     XGpio_Initialize(&Gpio1, XPAR_AXI_GPIO_1_DEVICE_ID);
     XGpio_Initialize(&Gpio2, XPAR_AXI_GPIO_2_DEVICE_ID);
     XGpio_SetDataDirection(&Gpio2, 1, 0x0); // Outputs
-    XGpio_SetDataDirection(&Gpio1, 1, 0x1); // Input
+    XGpio_SetDataDirection(&Gpio1, 1, 0xFFFFFFFF); // Input
     XGpio_SetDataDirection(&Gpio, PWM_GPIO_CHANNEL, ~0x3); // GPIO[0:1] as outputs
 
     // Write to lights
@@ -77,6 +77,11 @@ int main() {
     	    play_square_wave(196, 800);   // G3
 
     	    delay_us(500000); // rest before repeat
+
+    	    // Read switch state (from gpio 1)
+			u32 switch_value = XGpio_DiscreteRead(&Gpio1, 1);
+			// Write switch state to lights (to gpio 2)
+			XGpio_DiscreteWrite(&Gpio2, 1, switch_value);
     }
 
     return 0;
