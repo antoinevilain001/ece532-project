@@ -11,7 +11,7 @@
 /*******************************************************************/
 
 _STACK_SIZE = DEFINED(_STACK_SIZE) ? _STACK_SIZE : 0x400;
-_HEAP_SIZE = DEFINED(_HEAP_SIZE) ? _HEAP_SIZE : 0x800;
+_HEAP_SIZE = DEFINED(_HEAP_SIZE) ? _HEAP_SIZE : 0x400;
 
 /* Define Memories in the system */
 
@@ -49,15 +49,15 @@ SECTIONS
    *(.text)
    *(.text.*)
    *(.gnu.linkonce.t.*)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .init : {
    KEEP (*(.init))
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .fini : {
    KEEP (*(.fini))
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .ctors : {
    __CTOR_LIST__ = .;
@@ -68,7 +68,7 @@ SECTIONS
    KEEP (*(.ctors))
    __CTOR_END__ = .;
    ___CTORS_END___ = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .dtors : {
    __DTOR_LIST__ = .;
@@ -79,7 +79,7 @@ SECTIONS
    KEEP (*(.dtors))
    PROVIDE(__DTOR_END__ = .);
    PROVIDE(___DTORS_END___ = .);
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .rodata : {
    __rodata_start = .;
@@ -87,7 +87,7 @@ SECTIONS
    *(.rodata.*)
    *(.gnu.linkonce.r.*)
    __rodata_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .sdata2 : {
    . = ALIGN(8);
@@ -97,7 +97,7 @@ SECTIONS
    *(.gnu.linkonce.s2.*)
    . = ALIGN(8);
    __sdata2_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .sbss2 : {
    __sbss2_start = .;
@@ -105,7 +105,7 @@ SECTIONS
    *(.sbss2.*)
    *(.gnu.linkonce.sb2.*)
    __sbss2_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .data : {
    . = ALIGN(4);
@@ -118,27 +118,27 @@ SECTIONS
 
 .got : {
    *(.got)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .got1 : {
    *(.got1)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .got2 : {
    *(.got2)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .eh_frame : {
    *(.eh_frame)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .jcr : {
    *(.jcr)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .gcc_except_table : {
    *(.gcc_except_table)
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .sdata : {
    . = ALIGN(8);
@@ -147,7 +147,7 @@ SECTIONS
    *(.sdata.*)
    *(.gnu.linkonce.s.*)
    __sdata_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .sbss (NOLOAD) : {
    . = ALIGN(4);
@@ -157,7 +157,7 @@ SECTIONS
    *(.gnu.linkonce.sb.*)
    . = ALIGN(8);
    __sbss_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .tdata : {
    __tdata_start = .;
@@ -165,7 +165,7 @@ SECTIONS
    *(.tdata.*)
    *(.gnu.linkonce.td.*)
    __tdata_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .tbss : {
    __tbss_start = .;
@@ -173,7 +173,7 @@ SECTIONS
    *(.tbss.*)
    *(.gnu.linkonce.tb.*)
    __tbss_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 .bss (NOLOAD) : {
    . = ALIGN(4);
@@ -184,7 +184,7 @@ SECTIONS
    *(COMMON)
    . = ALIGN(4);
    __bss_end = .;
-} > axi_bram_ctrl_0_Mem0
+} > microblaze_0_local_memory_ilmb_bram_if_cntlr_Mem_microblaze_0_local_memory_dlmb_bram_if_cntlr_Mem
 
 _SDA_BASE_ = __sdata_start + ((__sbss_end - __sdata_start) / 2 );
 

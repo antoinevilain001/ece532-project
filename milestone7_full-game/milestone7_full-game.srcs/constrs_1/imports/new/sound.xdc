@@ -10,3 +10,8 @@ set_property IOSTANDARD LVCMOS33 [get_ports {GPIO_0_tri_o[1]}]
 ## SW0
 set_property PACKAGE_PIN J15 [get_ports SW0]
 set_property IOSTANDARD LVCMOS33 [get_ports SW0]
+
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[1]}]
+set_property PACKAGE_PIN H17 [get_ports {LED[0]}]
+set_property PACKAGE_PIN K15 [get_ports {LED[1]}]
