@@ -13,3 +13,4 @@ vivado*
 *ui
 *.jou
 *.log
+*.metadata
