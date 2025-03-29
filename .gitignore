@@ -6,3 +6,10 @@
 *.xpr
 *.sim
 vivado*
+*ip
+*ipshared
+*sim
+*synth
+*ui
+*.jou
+*.log
