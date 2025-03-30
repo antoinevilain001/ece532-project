@@ -47,5 +47,6 @@ module top_level_sound (
         .reset(reset),
         .sys_clock(sys_clock)
     );
+
 endmodule
 
