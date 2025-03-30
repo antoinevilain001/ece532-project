@@ -28,6 +28,7 @@ module pong #(
     output reg [9:0] paddle2_y,
     output reg [9:0] ball_x,
     output reg [9:0] ball_y,
+    output ball_x_dir,
     output wire [9:0] paddle1_height,
     output wire [9:0] paddle2_height,
     output wire [9:0] powerup_paddle_x,
@@ -51,6 +52,7 @@ module pong #(
 
     wire [9:0] ball_xspeed_abs; // manually 2's complement for some calculations
     assign ball_xspeed_abs = (ball_xspeed[9] == 1) ? (~ball_xspeed + 1) : ball_xspeed;
+    assign ball_x_dir = ball_xspeed[9] ? 0 : 1;
     
     
     powerup_paddle #(

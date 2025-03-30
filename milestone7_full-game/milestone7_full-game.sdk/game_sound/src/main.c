@@ -37,26 +37,6 @@ assign microblaze_input_tri_i[30:6] = 0;
 #define BALL_X_DIR_MASK         (1U << 4)
 #define POWERUP_PADDLE_SPAWN_MASK (1U << 5)
 
-uint8_t sw0_saved;
-uint8_t scores_saved;  // Lower 2 bits [1:0]
-uint8_t game_state_saved;
-uint8_t ball_x_dir_saved;
-uint8_t powerup_paddle_spawn_saved;
-uint8_t sw0;
-uint8_t scores;  // Lower 2 bits [1:0]
-uint8_t game_state;
-uint8_t ball_x_dir;
-uint8_t powerup_paddle_spawn;
-
-// Extracting values from the 32-bit register
-void read_register() {
-	uint32_t reg = XGpio_DiscreteRead(&Gpio1, 1);
-    sw0 = (reg & SW0_MASK) >> 31;
-    scores = (reg & SCORES_MASK) >> 0;  // Lower 2 bits [1:0]
-    game_state = (reg & GAME_STATE_MASK) >> 2;
-    ball_x_dir = (reg & BALL_X_DIR_MASK) >> 4;
-    powerup_paddle_spawn = (reg & POWERUP_PADDLE_SPAWN_MASK) >> 5;
-}
 
 void delay_us(u32 us) {
     XTmrCtr_Reset(&Timer, 0);
@@ -79,43 +59,23 @@ void play_note(u32 freq, u32 duration_ms) {
         delay_us(half_period_us);
     }
 
-    delay_us(1000); // slight gap
 }
-
-// ----------------------------
-// Melodies
-// ----------------------------
-int theme_melody[] = {
-    G3, G3, AS3, C4, G3, G3, F3, FS3, G3, G3, AS3, C4,
-    G3, G3, F3, FS3, AS4, G4, D4, AS4, G4, CS4, AS4, G4, C4, AS3, C4
-};
-int theme_durations[] = {
-    Q, Q, E, Q, Q, Q, Q, Q, Q, Q, E, Q,
-    Q, Q, Q, Q, E, E, DH, E, E, DH, E, E, DH, E, Q
-};
-
-int score_melody[] = { AS3, C4, D4 };
-int score_durations[] = { E, E, Q };
-
-int go_melody[] = { AS4, G4, CS4 };
-int go_durations[] = { E, E, H };
-
-int bounce_melody[] = { AS4 };
-int bounce_durations[] = { E };
 
 // ----------------------------
 // Melody playback
 // ----------------------------
 void play_melody(const int* melody, const int* durations, int length, int interruptible) {
     for (int i = 0; i < length; i++) {
+    	XGpio_DiscreteWrite(&Gpio2, 1, i); // debugging, print i
         // If interruptible, check input
         if (interruptible) {
         	uint32_t reg = XGpio_DiscreteRead(&Gpio1, 1);
-        	game_state = (reg & GAME_STATE_MASK) >> 2;
+        	uint8_t game_state = (reg & GAME_STATE_MASK) >> 2;
             if (game_state != 0)
                 break; // interrupt theme if GPIO goes low
         }
         play_note(melody[i], durations[i]);
+        delay_us(20000); // slight gap
     }
 }
 
@@ -136,30 +96,80 @@ int main() {
 
     XGpio_DiscreteWrite(&Gpio, PWM_GPIO_CHANNEL, AMP_ENABLE_MASK);
 
+    uint8_t sw0_saved = 0;
+    uint8_t scores_saved = 0;  // Lower 2 bits [1:0]
+    uint8_t game_state_saved = 0;
+    uint8_t ball_xdir_saved = 1;
+    uint8_t powerup_paddle_spawn_saved = 0;
+    uint8_t sw0;
+    uint8_t scores;  // Lower 2 bits [1:0]
+    uint8_t game_state;
+    uint8_t ball_xdir;
+    uint8_t powerup_paddle_spawn;
+
+    // ----------------------------
+    // Melodies
+    // ----------------------------
+    int theme_melody[] = {
+        G3, G3, AS3, C4, G3, G3, F3, FS3, G3, G3, AS3, C4,
+        G3, G3, F3, FS3, AS4, G4, D4, AS4, G4, CS4, AS4, G4, C4, AS3, C4
+    };
+    int theme_durations[] = {
+        H, Q, E, Q, Q, Q, Q, Q, Q, Q, E, Q,
+        Q, Q, Q, Q, E, E, DH, E, E, DH, E, E, DH, E, Q
+    };
+
+    int score_melody[] = { AS3, C4, D4 };
+    int score_durations[] = { E, E, Q };
+
+    int go_melody[] = { AS4, G4, CS4 };
+    int go_durations[] = { E, E, H };
+
+    int bounce_melody[] = { AS4 };
+    int bounce_durations[] = { E };
+
+
     while (1) {
-        read_register();
-        XGpio_DiscreteWrite(&Gpio2, 1, ball_x_dir); // for debugging to make sure it is read
+    	uint32_t reg = XGpio_DiscreteRead(&Gpio1, 1);
+		sw0 = (reg & SW0_MASK) >> 31;
+		scores = (reg & SCORES_MASK) >> 0;  // Lower 2 bits [1:0]
+		game_state = (reg & GAME_STATE_MASK) >> 2;
+		ball_xdir = (reg & BALL_X_DIR_MASK) >> 4;
+		powerup_paddle_spawn = (reg & POWERUP_PADDLE_SPAWN_MASK) >> 5;
+
+        XGpio_DiscreteWrite(&Gpio2, 1, ball_xdir | ball_xdir_saved << 1); // for debugging to make sure it is read
+
 
         if (game_state == 0b00) {
-            play_melody(theme_melody, theme_durations, sizeof(theme_melody)/sizeof(int), 1);
+        	//delay_us(1000);
+        	play_melody(theme_melody, theme_durations, sizeof(theme_melody)/sizeof(int), 1);
+            //game_state_saved = game_state;
         }
         else if (game_state != game_state_saved && game_state == 0b10) {
+        	//delay_us(1000);
 			play_melody(go_melody, go_durations, sizeof(go_melody)/sizeof(int), 0);
+			//game_state_saved = game_state;
 		}
         else if (scores != scores_saved) {
+        	//delay_us(1000);
             play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
+            play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
+            //scores_saved = scores;  // Lower 2 bits [1:0]
         }
-        else if (ball_x_dir != ball_x_dir_saved) {
+        else if (ball_xdir != ball_xdir_saved) {
+        	//delay_us(1000);
             play_melody(bounce_melody, bounce_durations, sizeof(bounce_melody)/sizeof(int), 0);
+            play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
+            //ball_xdir_saved = ball_xdir;
         }
 
         sw0_saved = sw0;
-        scores_saved = scores;  // Lower 2 bits [1:0]
         game_state_saved = game_state;
-        ball_x_dir_saved = ball_x_dir;
+        scores_saved = scores;
+        ball_xdir_saved = ball_xdir;
         powerup_paddle_spawn_saved = powerup_paddle_spawn;
 
-        delay_us(1e6);
+        delay_us(10000);
     }
 
     return 0;
