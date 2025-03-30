@@ -1,119 +1,119 @@
 #include "xparameters.h"
 #include "xgpio.h"
 #include "xtmrctr.h"
-#include "stdio.h"
+#include "notes.h"
 
-#define TIMER_DEVICE_ID XPAR_AXI_TIMER_0_DEVICE_ID
-#define PWM_GPIO_CHANNEL 1
-#define AMP_GPIO_BIT 1
+#define GPIO_DEVICE_ID      XPAR_AXI_GPIO_0_DEVICE_ID
+#define GPIO_INPUT_ID       XPAR_AXI_GPIO_1_DEVICE_ID
+#define TIMER_DEVICE_ID     XPAR_AXI_TIMER_0_DEVICE_ID
+#define PWM_GPIO_CHANNEL    1
+#define AMP_GPIO_BIT        1
 
-#define AMP_ENABLE_MASK (1 << AMP_GPIO_BIT)
-#define OUTPUT_HIGH_MASK (1 << 0) | AMP_ENABLE_MASK
-#define OUTPUT_LOW_MASK  AMP_ENABLE_MASK
-
-#define NOTE_DURATION_MS 150  // Quarter note ~120 BPM
-#define CLOCK_FREQ XPAR_AXI_TIMER_0_CLOCK_FREQ_HZ
+#define CLOCK_FREQ          XPAR_AXI_TIMER_0_CLOCK_FREQ_HZ
+#define AMP_ENABLE_MASK     (1 << AMP_GPIO_BIT)
+#define OUTPUT_HIGH_MASK    ((1 << 0) | AMP_ENABLE_MASK)
+#define OUTPUT_LOW_MASK     AMP_ENABLE_MASK
 
 XGpio Gpio;
-XGpio Gpio1;
-XGpio Gpio2;
-
+XGpio Gpio1; // input
+XGpio Gpio2; // output
 XTmrCtr Timer;
-
-typedef enum {
-    IDLE,              // Waiting for switch to turn ON
-    PLAYING,           // Playing the song
-    WAIT_FOR_RELEASE   // Waiting for switch to turn OFF
-} FSM_State;
-
 
 void delay_us(u32 us) {
     XTmrCtr_Reset(&Timer, 0);
     while (XTmrCtr_GetValue(&Timer, 0) < us * (CLOCK_FREQ / 1000000));
 }
 
-void play_square_wave(u32 frequency_hz, u32 duration_ms) {
-    u32 half_period_us = 1000000 / (2 * frequency_hz);
+void play_note(u32 freq, u32 duration_ms) {
+    if (freq == REST) {
+        delay_us(duration_ms * 1000);
+        return;
+    }
+
+    u32 half_period_us = 1000000 / (2 * freq);
     u32 cycles = (duration_ms * 1000) / (2 * half_period_us);
 
     for (u32 i = 0; i < cycles; i++) {
-        // HIGH
         XGpio_DiscreteWrite(&Gpio, PWM_GPIO_CHANNEL, OUTPUT_HIGH_MASK);
         delay_us(half_period_us);
-
-        // LOW
         XGpio_DiscreteWrite(&Gpio, PWM_GPIO_CHANNEL, OUTPUT_LOW_MASK);
         delay_us(half_period_us);
     }
+
+    delay_us(1000); // slight gap
 }
 
-void play_song1_jeopardy() {
-	play_square_wave(196, 400);   // G3
-	play_square_wave(233, 400);   // Bb3
-	play_square_wave(261, 400);   // C4
-	play_square_wave(196, 400);   // G3
-	play_square_wave(233, 400);   // Bb3
-	play_square_wave(277, 400);   // Db4
-	play_square_wave(261, 800);   // C4
+// ----------------------------
+// Melodies
+// ----------------------------
+int theme_melody[] = {
+    G3, G3, AS3, C4, G3, G3, F3, FS3, G3, G3, AS3, C4,
+    G3, G3, F3, FS3, AS4, G4, D4, AS4, G4, CS4, AS4, G4, C4, AS3, C4
+};
+int theme_durations[] = {
+    Q, Q, E, Q, Q, Q, Q, Q, Q, Q, E, Q,
+    Q, Q, Q, Q, E, E, DH, E, E, DH, E, E, DH, E, Q
+};
 
-	delay_us(300000); // brief rest (300ms)
+int score_melody[] = { AS3, C4, D4 };
+int score_durations[] = { E, E, Q };
 
-	play_square_wave(196, 400);   // G3
-	play_square_wave(233, 400);   // Bb3
-	play_square_wave(261, 400);   // C4
-	play_square_wave(233, 400);   // Bb3
-	play_square_wave(196, 800);   // G3
+int go_melody[] = { AS4, G4, CS4 };
+int go_durations[] = { E, E, H };
 
-	delay_us(100000); // rest before repeat
+int bounce_melody[] = { AS4 };
+int bounce_durations[] = { E };
+
+// ----------------------------
+// Melody playback
+// ----------------------------
+void play_melody(const int* melody, const int* durations, int length, int interruptible) {
+    for (int i = 0; i < length; i++) {
+        // If interruptible, check input
+        if (interruptible) {
+            int val = XGpio_DiscreteRead(&Gpio1, 1);
+            if (val == 0)
+                break; // interrupt theme if GPIO goes low
+        }
+        play_note(melody[i], durations[i]);
+    }
 }
-
 
 int main() {
+    // Init GPIOs and Timer
     XGpio_Initialize(&Gpio, XPAR_AXI_GPIO_0_DEVICE_ID);
     XGpio_Initialize(&Gpio1, XPAR_AXI_GPIO_1_DEVICE_ID);
     XGpio_Initialize(&Gpio2, XPAR_AXI_GPIO_2_DEVICE_ID);
-    XGpio_SetDataDirection(&Gpio2, 1, 0x0); // Outputs
-    XGpio_SetDataDirection(&Gpio1, 1, 0xFFFFFFFF); // Input
-    XGpio_SetDataDirection(&Gpio, PWM_GPIO_CHANNEL, ~0x3); // GPIO[0:1] as outputs
-    FSM_State state = IDLE;
 
-    // Write to lights
-    XGpio_DiscreteWrite(&Gpio2, 1, 0x3);
+    XGpio_SetDataDirection(&Gpio, PWM_GPIO_CHANNEL, ~0x3); // outputs
+    XGpio_SetDataDirection(&Gpio1, 1, 0xFFFFFFFF);     // inputs
+    XGpio_SetDataDirection(&Gpio2, 1, 0x0); // Outputs
 
     XTmrCtr_Initialize(&Timer, TIMER_DEVICE_ID);
     XTmrCtr_SetOptions(&Timer, 0, XTC_AUTO_RELOAD_OPTION);
     XTmrCtr_SetResetValue(&Timer, 0, 0);
     XTmrCtr_Start(&Timer, 0);
 
-    // Enable amplifier
     XGpio_DiscreteWrite(&Gpio, PWM_GPIO_CHANNEL, AMP_ENABLE_MASK);
 
     while (1) {
-			// Read switch state (from gpio 1)
-			u32 switch_value = XGpio_DiscreteRead(&Gpio1, 1);
-			// Write switch state to lights (to gpio 2)
-			XGpio_DiscreteWrite(&Gpio2, 1, switch_value);
+        int gpio_val = XGpio_DiscreteRead(&Gpio1, 1);
+        XGpio_DiscreteWrite(&Gpio2, 1, gpio_val);
 
-			// FSM Logic
-			switch (state) {
-				case IDLE:
-					if (switch_value & 0x1) {  // If switch is ON
-						state = PLAYING;
-					}
-					break;
+        if (gpio_val == 0b0001) {
+            play_melody(theme_melody, theme_durations, sizeof(theme_melody)/sizeof(int), 1);
+        }
+        else if (gpio_val == 0b0010) {
+            play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
+        }
+        else if (gpio_val == 0b0100) {
+            play_melody(go_melody, go_durations, sizeof(go_melody)/sizeof(int), 0);
+        }
+        else if (gpio_val == 0b1000) {
+            play_melody(bounce_melody, bounce_durations, sizeof(bounce_melody)/sizeof(int), 0);
+        }
 
-				case PLAYING:
-					play_song1_jeopardy();
-
-					state = WAIT_FOR_RELEASE;  // Move to waiting state
-					break;
-
-				case WAIT_FOR_RELEASE:
-					if (!(switch_value & 0x1)) {  // Wait until switch turns OFF
-						state = IDLE;
-					}
-					break;
-			}
+        delay_us(1e6);
     }
 
     return 0;
