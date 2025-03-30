@@ -59,7 +59,7 @@ module top #(
     wire [1:0] player_won;
     wire show_gameover_screen = gameover || (player_won != 0);
     //wire [1:0] game_state;
-    assign ball_x_dir = ball_x > 0 ? 1 : 0;
+    assign ball_x_dir = ball_x[9] ? 0 : 1;
     
     vga_bw #(
         .GAME_WIDTH(GAME_WIDTH),

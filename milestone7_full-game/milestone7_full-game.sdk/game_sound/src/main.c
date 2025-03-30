@@ -19,6 +19,45 @@ XGpio Gpio1; // input
 XGpio Gpio2; // output
 XTmrCtr Timer;
 
+/*
+assign microblaze_input_tri_i[31] = SW0;
+assign microblaze_input_tri_i[0] = score1[0];
+assign microblaze_input_tri_i[1] = score2[0];
+assign microblaze_input_tri_i[3:2] = game_state;
+	localparam TITLE_SCREEN = 2'b00;
+    localparam GAMEPLAY = 2'b01;
+    localparam GAMEOVER = 2'b10;
+assign microblaze_input_tri_i[4] = ball_x_dir;
+assign microblaze_input_tri_i[5] = powerup_paddle_spawn;
+assign microblaze_input_tri_i[30:6] = 0;
+*/
+#define SW0_MASK                (1U << 31)
+#define SCORES_MASK             (3U << 0)  // Covers both score1[0] (bit 0) and score2[0] (bit 1)
+#define GAME_STATE_MASK         (3U << 2)  // 2-bit field at bits [3:2]
+#define BALL_X_DIR_MASK         (1U << 4)
+#define POWERUP_PADDLE_SPAWN_MASK (1U << 5)
+
+uint8_t sw0_saved;
+uint8_t scores_saved;  // Lower 2 bits [1:0]
+uint8_t game_state_saved;
+uint8_t ball_x_dir_saved;
+uint8_t powerup_paddle_spawn_saved;
+uint8_t sw0;
+uint8_t scores;  // Lower 2 bits [1:0]
+uint8_t game_state;
+uint8_t ball_x_dir;
+uint8_t powerup_paddle_spawn;
+
+// Extracting values from the 32-bit register
+void read_register() {
+	uint32_t reg = XGpio_DiscreteRead(&Gpio1, 1);
+    sw0 = (reg & SW0_MASK) >> 31;
+    scores = (reg & SCORES_MASK) >> 0;  // Lower 2 bits [1:0]
+    game_state = (reg & GAME_STATE_MASK) >> 2;
+    ball_x_dir = (reg & BALL_X_DIR_MASK) >> 4;
+    powerup_paddle_spawn = (reg & POWERUP_PADDLE_SPAWN_MASK) >> 5;
+}
+
 void delay_us(u32 us) {
     XTmrCtr_Reset(&Timer, 0);
     while (XTmrCtr_GetValue(&Timer, 0) < us * (CLOCK_FREQ / 1000000));
@@ -71,8 +110,9 @@ void play_melody(const int* melody, const int* durations, int length, int interr
     for (int i = 0; i < length; i++) {
         // If interruptible, check input
         if (interruptible) {
-            int val = XGpio_DiscreteRead(&Gpio1, 1);
-            if (val == 0)
+        	uint32_t reg = XGpio_DiscreteRead(&Gpio1, 1);
+        	game_state = (reg & GAME_STATE_MASK) >> 2;
+            if (game_state != 0)
                 break; // interrupt theme if GPIO goes low
         }
         play_note(melody[i], durations[i]);
@@ -97,22 +137,27 @@ int main() {
     XGpio_DiscreteWrite(&Gpio, PWM_GPIO_CHANNEL, AMP_ENABLE_MASK);
 
     while (1) {
-        int gpio_val = XGpio_DiscreteRead(&Gpio1, 1);
-        XGpio_DiscreteWrite(&Gpio2, 1, gpio_val);
+        read_register();
+        XGpio_DiscreteWrite(&Gpio2, 1, ball_x_dir); // for debugging to make sure it is read
 
-        play_melody(theme_melody, theme_durations, sizeof(theme_melody)/sizeof(int), 0);
-        if (gpio_val == 0b1000) {
+        if (game_state == 0b00) {
             play_melody(theme_melody, theme_durations, sizeof(theme_melody)/sizeof(int), 1);
         }
-        else if (gpio_val == 0b0010) {
+        else if (game_state != game_state_saved && game_state == 0b10) {
+			play_melody(go_melody, go_durations, sizeof(go_melody)/sizeof(int), 0);
+		}
+        else if (scores != scores_saved) {
             play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
         }
-        else if (gpio_val == 0b0010) {
-            play_melody(go_melody, go_durations, sizeof(go_melody)/sizeof(int), 0);
-        }
-        else if (gpio_val == 0b0001) {
+        else if (ball_x_dir != ball_x_dir_saved) {
             play_melody(bounce_melody, bounce_durations, sizeof(bounce_melody)/sizeof(int), 0);
         }
+
+        sw0_saved = sw0;
+        scores_saved = scores;  // Lower 2 bits [1:0]
+        game_state_saved = game_state;
+        ball_x_dir_saved = ball_x_dir;
+        powerup_paddle_spawn_saved = powerup_paddle_spawn;
 
         delay_us(1e6);
     }

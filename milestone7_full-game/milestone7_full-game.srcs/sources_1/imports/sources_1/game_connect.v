@@ -151,7 +151,7 @@ module game_connect (
         .GPIO_0_tri_o(GPIO_0_tri_o),
         .microblaze_input_tri_i(microblaze_input_tri_i),
         .microblaze_output_tri_o(microblaze_output_tri_o),
-        .reset(!resetn),
+        .resetn(resetn),
         .sys_clock(clk)
     );
 

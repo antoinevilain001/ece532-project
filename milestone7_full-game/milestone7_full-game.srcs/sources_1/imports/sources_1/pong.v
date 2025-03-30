@@ -124,8 +124,8 @@ module pong #(
             ball_yspeed <= 1;
             ball_x <= GAME_WIDTH / 2;
             ball_y <= GAME_HEIGHT / 2;
-            score1 <= 4;
-            score2 <= 4;
+            score1 <= 0;
+            score2 <= 0;
         end
         else begin
             if (update_game) begin
