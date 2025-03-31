@@ -42,7 +42,7 @@ module powerup_paddle #(
     wire collision = x_overlap && y_overlap;
     
     // powerup implementation logic
-    always @(posedge update_game) begin
+    always @(posedge clk) begin
         if (!resetn) begin
             powerup_active <= 0;
             powerup_timer <= 0;
@@ -51,13 +51,13 @@ module powerup_paddle #(
             powerup_delay <= 240; // + ($random % 240); turns out $random doesnt work, not synthesizable onto FPGA
             powerup_spawn <= 0;
         end
-        else begin
+        else if (update_game) begin
             if (!powerup_active && !powerup_spawn) begin
                 // state 1: nothing, base game, delay between powerup spawn
                 if (powerup_delay == 0) begin
                     // transition to state 2 powerup spawned onto board
-                    powerup_x <= (lfsr[9:0] % (GAME_WIDTH - POWERUP_SIZE - PADDLE_DISTANCE_FROM_EDGE * 2 - 100)) + PADDLE_DISTANCE_FROM_EDGE;
-                    powerup_y <= lfsr[10:0] % (GAME_HEIGHT - POWERUP_SIZE - 50); 
+                    powerup_x <= (lfsr[15:0] % (GAME_WIDTH - POWERUP_SIZE - PADDLE_DISTANCE_FROM_EDGE * 2 - 100)) + PADDLE_DISTANCE_FROM_EDGE;
+                    powerup_y <= lfsr[15:0] % (GAME_HEIGHT - POWERUP_SIZE - 50); 
                     // generate powerup location using lfsr
                     powerup_spawn <= 1;
                 end 
