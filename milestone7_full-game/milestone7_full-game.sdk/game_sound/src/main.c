@@ -75,7 +75,7 @@ void play_melody(const int* melody, const int* durations, int length, int interr
                 break; // interrupt theme if GPIO goes low
         }
         play_note(melody[i], durations[i]);
-        delay_us(20000); // slight gap
+        delay_us(1000); // slight gap
     }
 }
 
