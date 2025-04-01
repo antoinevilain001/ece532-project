@@ -58,7 +58,7 @@ void play_note(u32 freq, u32 duration_ms) {
         XGpio_DiscreteWrite(&Gpio, PWM_GPIO_CHANNEL, OUTPUT_LOW_MASK);
         delay_us(half_period_us);
     }
-
+    delay_us(20000);
 }
 
 // ----------------------------
@@ -75,7 +75,7 @@ void play_melody(const int* melody, const int* durations, int length, int interr
                 break; // interrupt theme if GPIO goes low
         }
         play_note(melody[i], durations[i]);
-        delay_us(1000); // slight gap
+        //delay_us(1000); // slight gap
     }
 }
 
@@ -115,7 +115,7 @@ int main() {
         G3, G3, F3, FS3, AS4, G4, D4, AS4, G4, CS4, AS4, G4, C4, AS3, C4
     };
     int theme_durations[] = {
-        H, Q, E, Q, Q, Q, Q, Q, Q, Q, E, Q,
+        Q, Q, E, Q, Q, Q, Q, Q, Q, Q, E, Q,
         Q, Q, Q, Q, E, E, DH, E, E, DH, E, E, DH, E, Q
     };
 
@@ -127,6 +127,12 @@ int main() {
 
     int bounce_melody[] = { AS4 };
     int bounce_durations[] = { E };
+
+    int powerup_spawn_melody[] = { DS5, AS4, D4 };
+    int powerup_spawn_durations[] = { E, Q, E };
+
+    int powerup_obtain_melody[] = { C3, D3, E3, F3, G3, A4, B4, C4 };
+    int powerup_obtain_durations[] = { E, E, E, E, E, E, E, E };
 
 
     while (1) {
@@ -153,13 +159,20 @@ int main() {
         else if (scores != scores_saved) {
         	//delay_us(1000);
             play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
-            play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
+            //play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
             //scores_saved = scores;  // Lower 2 bits [1:0]
         }
+        else if (powerup_paddle_spawn != powerup_paddle_spawn_saved) {
+			if (powerup_paddle_spawn == 1) { // powerup has just spawned
+				play_melody(powerup_spawn_melody, powerup_spawn_durations, sizeof(powerup_spawn_melody)/sizeof(int), 0);
+			} else if (powerup_paddle_spawn == 0) { // powerup was just obtained
+				play_melody(powerup_obtain_melody, powerup_obtain_durations, sizeof(powerup_obtain_melody)/sizeof(int), 0);
+			}
+		}
         else if (ball_xdir != ball_xdir_saved) {
         	//delay_us(1000);
             play_melody(bounce_melody, bounce_durations, sizeof(bounce_melody)/sizeof(int), 0);
-            play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
+            //play_melody(score_melody, score_durations, sizeof(score_melody)/sizeof(int), 0);
             //ball_xdir_saved = ball_xdir;
         }
 
